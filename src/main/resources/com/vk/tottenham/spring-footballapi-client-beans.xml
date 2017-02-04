@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/rabbit
+           http://www.springframework.org/schema/rabbit/spring-rabbit-1.3.xsd
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+	<bean id="footballApiRestTemplate" class="org.springframework.web.client.RestTemplate">
+		<constructor-arg>
+			<bean
+				class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory">
+				<constructor-arg ref="footballApiHttpClient" />
+				<property name="readTimeout"
+					value="${com.vk.tottenham.footballapi.httpSocketTimeout}" />
+				<property name="connectTimeout"
+					value="${com.vk.tottenham.footballapi.httpConnectionTimeout}" />
+			</bean>
+		</constructor-arg>
+		<property name="messageConverters">
+			<list>
+				<bean class="org.springframework.http.converter.FormHttpMessageConverter"/>
+				<ref bean="jsonConverter" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="footballApiHttpClient" class="org.apache.http.impl.client.DefaultHttpClient">
+		<!-- constructor-arg ref="footballApiConnectionManager" /-->
+	</bean>
+
+	<!-- bean id="footballApiConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager">
+		<property name="defaultMaxPerRoute"
+					value="${com.vk.tottenham.footballapi.connection.manager.defaultMaxPerRoute}" />
+		<property name="maxTotal"
+					value="${com.vk.tottenham.footballapi.connection.manager.maxTotal}" />
+	</bean-->
+
+	<!-- Http Json MessageConverter -->
+	<bean id="jsonConverter"
+		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="objectMapper">
+            <bean class="com.vk.tottenham.footballapi.FootballApiObjectMapper"/>
+         </property>
+	</bean>
+</beans>

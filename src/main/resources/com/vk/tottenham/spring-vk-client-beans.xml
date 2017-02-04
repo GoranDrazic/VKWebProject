@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/rabbit
+           http://www.springframework.org/schema/rabbit/spring-rabbit-1.3.xsd
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+	<bean id="vkRestTemplate" class="org.springframework.web.client.RestTemplate">
+		<constructor-arg>
+			<bean
+				class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory">
+				<constructor-arg ref="vkHttpClient" />
+				<property name="readTimeout"
+					value="${com.vk.tottenham.vk.httpSocketTimeout}" />
+				<property name="connectTimeout"
+					value="${com.vk.tottenham.vk.httpConnectionTimeout}" />
+			</bean>
+		</constructor-arg>
+		<property name="messageConverters">
+			<list>
+				<bean class="org.springframework.http.converter.FormHttpMessageConverter"/>
+				<ref bean="jsonConverter" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- Http Json MessageConverter -->
+	<bean id="jsonConverter"
+		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="objectMapper">
+            <bean class="com.vk.tottenham.vk.VkObjectMapper"/>
+         </property>
+	</bean>
+
+	<!-- bean id="rabbitRestClient"
+		class="com.expedia.evc.external.rabbitmq.impl.RabbitRestClient">
+		<constructor-arg ref="vkRestTemplate"/>
+		<constructor-arg value="${com.expedia.evc.webservice.rabbitmq.system-status/hosts}"/>
+		<constructor-arg value="${com.expedia.evc.webservice.rabbitmq.rest.overviewPath}"/>
+		<constructor-arg value="${com.expedia.evc.webservice.rabbitmq.rest.queuesPath}"/>
+	</bean -->
+</beans>

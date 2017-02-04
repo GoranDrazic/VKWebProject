@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+						http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd">
+	
+	<task:scheduled-tasks scheduler="scheduler">
+        <task:scheduled ref="twitterPoster" method="execute" cron="0 0/20 * * * ?"/>
+        <task:scheduled ref="officialNewsLoader" method="execute" cron="0 0/20 * * * ?"/>
+        <task:scheduled ref="instagramPoster" method="execute" cron="0 0/20 * * * ?"/>
+        <task:scheduled ref="youtubeChecker" method="execute" cron="0 0 * * * ?"/>
+        <task:scheduled ref="calendarUpdater" method="execute" cron="0 0 * * * ?"/>
+        <task:scheduled ref="birthdayPoster" method="execute" cron="0 0 10 * * ?"/>
+        <task:scheduled ref="playerInfoUpdater" method="execute" cron="0 0 0 0/5 * ?"/>
+        <task:scheduled ref="matchInfoLoader" method="execute" cron="0 0/5 * * * ?"/>
+        <task:scheduled ref="standingsUpdater" method="execute" cron="0 0/30 * * * ?"/>
+        <task:scheduled ref="playerStatsUpdater" method="execute" cron="0 0/30 * * * ?"/>
+        <task:scheduled ref="nextPreviousFixtureUpdater" method="execute" cron="0 0/30 * * * ?"/>
+        <!-- task:scheduled ref="nextPreviousFixtureUpdater" method="execute" cron="0/30 * * * * ?"/ -->
+    </task:scheduled-tasks>
+ 
+    <task:scheduler id="scheduler" pool-size="10"/>
+
+	<bean id="nextPreviousFixtureUpdater" class="com.vk.tottenham.scheduler.NextPreviousFixtureUpdater">
+		<!--property name="testMode" value="true" / -->
+	</bean>
+
+	<bean id="playerStatsUpdater" class="com.vk.tottenham.scheduler.PlayerStatsUpdater">
+		<!--property name="testMode" value="true" / -->
+	</bean>
+
+    <bean id="standingsUpdater" class="com.vk.tottenham.scheduler.StandingsUpdater">
+		<!--property name="testMode" value="true" / -->
+	</bean>
+
+	<bean id="twitterPoster" class="com.vk.tottenham.scheduler.TwitterPoster">
+		<property name="accounts">
+			<list>
+				<value>HotspurRelated</value>
+				<value>SpursStatMan</value>
+			</list>
+		</property>
+		<!--property name="testMode" value="true" /-->
+	</bean>
+
+	<bean id="officialNewsLoader" class="com.vk.tottenham.scheduler.OfficialNewsLoader">
+		<!-- property name="testMode" value="true" / -->
+	</bean>
+
+	<bean id="instagramPoster" class="com.vk.tottenham.scheduler.InstagramPoster">
+		<!--property name="testMode" value="true" /-->
+	</bean>
+
+	<bean id="youtubeChecker" class="com.vk.tottenham.scheduler.YoutubeChecker">
+		<!--property name="testMode" value="true" /-->
+	</bean>	
+
+	<bean id="playerInfoUpdater" class="com.vk.tottenham.scheduler.PlayerInfoUpdater">
+		<property name="playerService" ref="playerService" />
+	</bean>
+
+	<bean id="calendarUpdater" class="com.vk.tottenham.scheduler.CalendarUpdater">
+		<property name="fixtureService" ref="fixtureService" />
+	</bean>
+
+	<bean id="birthdayPoster" class="com.vk.tottenham.scheduler.BirthdayPoster">
+		<!--property name="testMode" value="true" /-->
+	</bean>
+
+	<bean id="fantasyResultsPoster" class="com.vk.tottenham.scheduler.FantasyResultsPoster">
+		<!--property name="testMode" value="true" /-->
+	</bean>
+
+	<bean id="matchInfoLoader" class="com.vk.tottenham.scheduler.MatchInfoLoader">
+		<property name="fixtureService" ref="fixtureService" />
+		<property name="playerService" ref="playerService" />
+		<property name="teamService" ref="teamService" />
+		<!-- property name="testMode" value="true" /-->
+	</bean>
+
+	<bean id="testVkConfig" class="com.vk.tottenham.core.model.VKConfig">
+		<constructor-arg value="125436039"/>
+		<constructor-arg value="234341611"/>
+		<constructor-arg value="377937124" />
+	</bean>
+
+	<bean id="vkConfig" class="com.vk.tottenham.core.model.VKConfig">
+		<constructor-arg value="15474997" />
+		<constructor-arg value="239420841" />
+		<constructor-arg value="2000000001" />
+	</bean>
+</beans>
