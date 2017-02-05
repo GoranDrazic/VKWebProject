@@ -116,7 +116,7 @@ public class OfficialNewsLoader extends SchedulerBase {
             for (Element imageContainer : imageContainers) {
                 Elements images = imageContainer.getElementsByTag("img");
                 for (Element image : images) {
-                    String imageUrl = BASE_URL + image.attr("src").trim().replace("/n", "");
+                    String imageUrl = BASE_URL + image.attr("src").trim().replace("\n", "");
                     String photoId = photoDownloader.downloadPhoto(imageUrl, isTestMode); 
                     photoIds.add(photoId);
                 }

@@ -41,10 +41,8 @@ public class TwitterPoster extends SchedulerBase {
                     Element twitElement = it.next();
                     String href = twitElement
                             .getElementsByClass("tweet-timestamp").attr("href");
-                    System.out.println("href: " + href);
                     String twitText = twitElement
                             .getElementsByClass("js-tweet-text-container").text();
-                    System.out.println("text: " + twitText);
                     Elements photoElements = twitElement
                             .getElementsByClass("AdaptiveMedia-photoContainer");
                     String imgSrc = null;

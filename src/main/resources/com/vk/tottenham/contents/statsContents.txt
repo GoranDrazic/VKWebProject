@@ -5,8 +5,12 @@
 |-
 ! <center><gray>Премьер-лига 2016/17</gray></center>
 |}
-<center>[[Премьер-лига]] | [[Турнирная таблица]] | '''[[Статистика]]'''</center>
+<center>[[page-15474997_50872758|Календарь]] | [[page-15474997_36552750|Турнирная таблица]] | '''[[page-15474997_10384325|Статистика]]'''</center>
 
+{|
+|-
+! <center><gray>Статистика игроков</gray></center>
+|}
 {|
 |-
 ! <center><gray>#</gray></center> !! <center><gray>Фото</gray></center> !! <center><gray>Игрок</gray></center> !! <center><gray>Голы</gray></center> !! <center><gray>Ассисты</gray></center>

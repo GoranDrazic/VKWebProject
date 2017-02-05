@@ -35,51 +35,55 @@ public class PlayerStatsUpdater extends SchedulerBase {
 
     @Override
     public void execute() {
-        try {
-            StatsResponse assistsResponse = footballApiGateway.getAssistStats(CompetitionName.PREMIER_LEAGUE);
-            StatsResponse goalResponse = footballApiGateway.getGoalStats(CompetitionName.PREMIER_LEAGUE);
-            Map<Name, GoalAssist> playerMap = new LinkedHashMap<>();
-            for (PlayerStatistics playerStatistics : goalResponse.getStats()
-                    .getContent()) {
-                Name name = playerStatistics.getOwner().getName();
-                int goals = (int) playerStatistics.getValue();
-                playerMap.put(name, new GoalAssist(goals, 0));
+        for (CompetitionName competition : CompetitionName.values()) {
+            if (competition == CompetitionName.UEFA_CHAMPIONS_LEAGUE 
+                    || competition == CompetitionName.UEFA_EUROPA_LEAGUE) return;
+            try {
+                StatsResponse assistsResponse = footballApiGateway.getAssistStats(competition);
+                StatsResponse goalResponse = footballApiGateway.getGoalStats(competition);
+                Map<Name, GoalAssist> playerMap = new LinkedHashMap<>();
+                for (PlayerStatistics playerStatistics : goalResponse.getStats()
+                        .getContent()) {
+                    Name name = playerStatistics.getOwner().getName();
+                    int goals = (int) playerStatistics.getValue();
+                    playerMap.put(name, new GoalAssist(goals, 0));
 
-            }
-            for (PlayerStatistics playerStatistics : assistsResponse.getStats()
-                    .getContent()) {
-                Name name = playerStatistics.getOwner().getName();
-                int assists = (int) playerStatistics.getValue();
-                if (playerMap.get(name) != null) {
-                    playerMap.get(name).setAssists(assists);
-                } else {
-                    playerMap.put(name, new GoalAssist(0, assists));
                 }
+                for (PlayerStatistics playerStatistics : assistsResponse.getStats()
+                        .getContent()) {
+                    Name name = playerStatistics.getOwner().getName();
+                    int assists = (int) playerStatistics.getValue();
+                    if (playerMap.get(name) != null) {
+                        playerMap.get(name).setAssists(assists);
+                    } else {
+                        playerMap.put(name, new GoalAssist(0, assists));
+                    }
+                }
+                StringBuilder stats = new StringBuilder();
+                for (Entry<Name, GoalAssist> entry : playerMap.entrySet()) {
+                    String[] nameSurname = entry.getKey().getDisplay().split(" ");
+                    Player searchPlayer = new Player(nameSurname[0], nameSurname[1]);
+                    Player player = playerService.findNameAndSurname(searchPlayer);
+                    String row = new String(STATS_ROW);
+                    row = row
+                            .replaceAll("##goals##",
+                                    String.valueOf(entry.getValue().getGoals()))
+                            .replaceAll("##assists##",
+                                    String.valueOf(entry.getValue().getAssists()))
+                            .replaceAll("##squadNumber##",
+                                    String.valueOf(player.getSquadNumber()))
+                            .replaceAll("##photoId##", player.getStatsPhoto())
+                            .replaceAll("##nameInRussian##", player.getRussianNameNom());
+                    stats.append(row);
+                }
+                URL url = Resources
+                        .getResource(competition.statsTemplate());
+                String pageContents = Resources.toString(url, Charsets.UTF_8);
+                pageContents = pageContents.replace("##statsTable##", stats);
+                vkGateway.savePage(getGroupId(), competition.statsPage(), pageContents);
+            } catch (Exception e) {
+                throw new VkException("Exception updating standing.", e);
             }
-            StringBuilder stats = new StringBuilder();
-            for (Entry<Name, GoalAssist> entry : playerMap.entrySet()) {
-                String[] nameSurname = entry.getKey().getDisplay().split(" ");
-                Player searchPlayer = new Player(nameSurname[0], nameSurname[1]);
-                Player player = playerService.findNameAndSurname(searchPlayer);
-                String row = new String(STATS_ROW);
-                row = row
-                        .replaceAll("##goals##",
-                                String.valueOf(entry.getValue().getGoals()))
-                        .replaceAll("##assists##",
-                                String.valueOf(entry.getValue().getAssists()))
-                        .replaceAll("##squadNumber##",
-                                String.valueOf(player.getSquadNumber()))
-                        .replaceAll("##photoId##", player.getStatsPhoto())
-                        .replaceAll("##nameInRussian##", player.getRussianNameNom());
-                stats.append(row);
-            }
-            URL url = Resources
-                    .getResource("com/vk/tottenham/contents/statsContents.txt");
-            String pageContents = Resources.toString(url, Charsets.UTF_8);
-            pageContents = pageContents.replace("##statsTable##", stats);
-            vkGateway.savePage(getGroupId(), "10384325", pageContents);
-        } catch (Exception e) {
-            throw new VkException("Exception updating standing.", e);
         }
     }
 
