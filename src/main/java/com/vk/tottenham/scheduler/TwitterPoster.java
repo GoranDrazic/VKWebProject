@@ -50,14 +50,9 @@ public class TwitterPoster extends SchedulerBase {
                         Elements imgElements = photoElement.getElementsByTag("img");
                         for (Element imgElement : imgElements) {
                             imgSrc = imgElement.attr("src");
-                            System.out.println("img: " + imgElement.attr("src"));
                         }
                     }
                     if(!twitterService.exists("twitter:" + account + ":" + href)) {
-                        Resource resource = new Resource();
-                        resource.setId("twitter:" + account + ":" + href);
-                        twitterService.save(resource);
-                        
                         String photoId = null;
                         if (imgSrc != null) {
                             photoId = photoDownloader.downloadPhoto(imgSrc, isTestMode);
@@ -65,6 +60,10 @@ public class TwitterPoster extends SchedulerBase {
                         vkGateway.sendChatMessage(account + " твитнул: «"
                                 + twitText
                                 + "».", getChatId(), photoId, getGroupId());
+
+                        Resource resource = new Resource();
+                        resource.setId("twitter:" + account + ":" + href);
+                        twitterService.save(resource);
                     }
                     Thread.currentThread().sleep(5*1000);
                 }

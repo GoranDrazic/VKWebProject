@@ -73,8 +73,4 @@ public abstract class SchedulerBase {
             }
         }
     }
-
-    /*public void setVkContext(VKContext vkContext) {
-        this.vkContext = vkContext;
-    }*/
 }

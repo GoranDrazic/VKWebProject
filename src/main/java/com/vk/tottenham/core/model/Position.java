@@ -1,20 +1,16 @@
 package com.vk.tottenham.core.model;
 
 public enum Position {
-    AttackingMidfielder, Goalkeeper, Defender, Midfielder, Striker, Forward;
+    Goalkeeper, Defender, Midfielder, Forward;
     public static Position getByString(String s) {
         switch (s) {
-        case "Attacking midfielder":
-            return AttackingMidfielder;
-        case "Goalkeeper":
+        case "G":
             return Goalkeeper;
-        case "Defender":
+        case "D":
             return Defender;
-        case "Midfielder":
+        case "M":
             return Midfielder;
-        case "Striker":
-            return Striker;
-        case "Forward":
+        case "F":
             return Forward;
         }
         return null;

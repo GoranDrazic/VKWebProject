@@ -1,24 +1,31 @@
 package com.vk.tottenham.footballapi.model;
 
+import static com.vk.tottenham.template.PageType.*;
+
+import com.vk.tottenham.template.PageType;
+
 public enum CompetitionName {
-    PREMIER_LEAGUE("Premier League", "1", "54", "com/vk/tottenham/contents/statsContents.txt", "10384325"), 
-    FA_CUP("FA Cup", "4", "71", "com/vk/tottenham/contents/statsContentsFACup.txt", "52543642"), 
-    EFL_CUP("EFL Cup", "5", "56", "com/vk/tottenham/contents/statsContentsEFLCup.txt", "52543702"),
-    UEFA_CHAMPIONS_LEAGUE("UEFA Champions League", "2", "66", "", ""), 
-    UEFA_EUROPA_LEAGUE("UEFA Europa League", "3", "70", "", "");
+    PREMIER_LEAGUE("Premier League", "1", new PageType[]{CALENDAR, TABLE, STATS}, "photo-15474997_399980319", "photo-15474997_399975946", "page-15474997_50872758"), 
+    FA_CUP("FA Cup", "4", new PageType[]{CALENDAR, STATS}, "photo-15474997_399980320", "photo-15474997_399975947", "page-15474997_11056066"), 
+    EFL_CUP("EFL Cup", "5", new PageType[]{CALENDAR, STATS}, "photo-15474997_399980325", "photo-15474997_399975949", "page-15474997_50875060"),
+    UEFA_CHAMPIONS_LEAGUE("UEFA Champions League", "2", new PageType[]{CALENDAR, /*TODO:PLAY_OFFS, */GROUP_STAGE, QUALIFICATION, STATS}, "photo-15474997_399980329", "photo-15474997_399975952", "page-15474997_50875305"), 
+    UEFA_EUROPA_LEAGUE("UEFA Europa League", "3", new PageType[]{CALENDAR, /*TODO:PLAY_OFFS, */GROUP_STAGE, QUALIFICATION, STATS}, "photo-15474997_399980333", "photo-15474997_399975959", "page-15474997_50875307");
     
     private String value;
     private String comp;
-    private String compSeason;
-    private String statsTemplate;
-    private String statsPage;
+    private PageType[] supportedPages;
+    private String activeIcon;
+    private String inactiveIcon;
+    private String firstPage;
 
-    private CompetitionName(String value, String comp, String compSeason, String statsTemplate, String statsPage) {
+    private CompetitionName(String value, String comp, PageType[] supportedPages,
+            String activeIcon, String inactiveIcon, String firstPage) {
         this.value = value;
         this.comp = comp;
-        this.compSeason = compSeason;
-        this.statsTemplate = statsTemplate;
-        this.statsPage = statsPage;
+        this.supportedPages = supportedPages;
+        this.activeIcon = activeIcon;
+        this.inactiveIcon = inactiveIcon;
+        this.firstPage = firstPage;
     }
 
     public String value() {
@@ -29,15 +36,19 @@ public enum CompetitionName {
         return comp;
     }
 
-    public String compSeason() {
-        return compSeason;
+    public PageType[] supportedPages() {
+        return supportedPages;
     }
 
-    public String statsTemplate() {
-        return statsTemplate;
+    public String activeIcon() {
+        return activeIcon;
     }
 
-    public String statsPage() {
-        return statsPage;
+    public String inactiveIcon() {
+        return inactiveIcon;
+    }
+
+    public String firstPage() {
+        return firstPage;
     }
 }

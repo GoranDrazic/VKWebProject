@@ -112,4 +112,14 @@ public class Player {
     public void setStatsPhoto(String statsPhoto) {
         this.statsPhoto = statsPhoto;
     }
+
+    @Override
+    public String toString() {
+        return "Player [id=" + id + ", name=" + name + ", surname=" + surname
+                + ", dateOfBirth=" + dateOfBirth + ", position=" + position
+                + ", dateJoined=" + dateJoined + ", previousClubs=" + previousClubs
+                + ", squadNumber=" + squadNumber + ", instagram=" + instagram
+                + ", russianNameNom=" + russianNameNom + ", statsPhoto=" + statsPhoto
+                + "]";
+    }
 }

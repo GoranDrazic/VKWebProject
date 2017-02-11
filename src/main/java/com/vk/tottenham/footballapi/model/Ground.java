@@ -4,6 +4,8 @@ public class Ground {
     private String name;
     private String city;
     private double id;
+    private int capacity;
+    private Location location;
 
     public String getName() {
         return name;
@@ -27,5 +29,21 @@ public class Ground {
 
     public void setId(double id) {
         this.id = id;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }

@@ -76,7 +76,6 @@ public class MatchInfoLoader extends SchedulerBase {
                 loadPhotos(nearestFixture);
             }
 
-            System.out.println(timeBeforeGame);
         } catch (Exception e) {
             throw new VkException("Failed to load photos.", e);
         }

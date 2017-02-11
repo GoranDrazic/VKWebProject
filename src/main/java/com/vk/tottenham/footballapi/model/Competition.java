@@ -1,10 +1,13 @@
 package com.vk.tottenham.footballapi.model;
 
+import java.util.List;
+
 public class Competition {
     private String abbreviation;
     private String description;
     private String level;
     private double id;
+    private List<CompetitionSeason> compSeasons;
 
     public String getAbbreviation() {
         return abbreviation;
@@ -36,5 +39,13 @@ public class Competition {
 
     public void setId(double id) {
         this.id = id;
+    }
+
+    public List<CompetitionSeason> getCompSeasons() {
+        return compSeasons;
+    }
+
+    public void setCompSeasons(List<CompetitionSeason> compSeasons) {
+        this.compSeasons = compSeasons;
     }
 }

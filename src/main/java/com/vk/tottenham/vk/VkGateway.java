@@ -34,6 +34,8 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.vk.tottenham.exception.VkException;
 import com.vk.tottenham.vk.model.CreateAlbumResponseWrapper;
 import com.vk.tottenham.vk.model.GetAlbumsResponseWrapper;
+import com.vk.tottenham.vk.model.GetPageResponse;
+import com.vk.tottenham.vk.model.GetPageResponseWrapper;
 import com.vk.tottenham.vk.model.GetPhotosResponseWrapper;
 import com.vk.tottenham.vk.model.GetPostsResponseWrapper;
 import com.vk.tottenham.vk.model.GetUploaderServerResponseWrapper;
@@ -68,7 +70,7 @@ public class VkGateway {
             + "?client_id={APP_ID}" + "&scope={PERMISSIONS}"
             // + "&group_ids={GROUP_IDS}"
             + "&redirect_uri={REDIRECT_URI}" + "&display={DISPLAY}"
-            + "&v={API_VERSION}" + "&response_type=token&state=Idoesntfuckingwork";
+            + "&v={API_VERSION}" + "&response_type=code&state=Idoesntfuckingwork";
 
     private VkObjectMapper vkObjectMapper = new VkObjectMapper();
 
@@ -171,12 +173,27 @@ public class VkGateway {
         return response.getResponse().getItems();
     }
 
-    public int savePage(String groupId, String pageId, String text) {
+    public int savePage(String groupId, String pageId, String title, String text) {
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("group_id", groupId));
-        params.add(new BasicNameValuePair("page_id", pageId));
+        if (pageId != null) {
+            params.add(new BasicNameValuePair("page_id", pageId));
+        }
+        if (title != null) {
+            params.add(new BasicNameValuePair("title", title));
+        }
         params.add(new BasicNameValuePair("text", text));
         SavePageResponseWrapper response = invokeOldApi("pages.save", params, SavePageResponseWrapper.class);
+        return response.getResponse();
+    }
+
+    public GetPageResponse getPage(String groupId, String pageId) {
+        List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("owner_id", "-" + groupId));
+        params.add(new BasicNameValuePair("page_id", pageId));
+        params.add(new BasicNameValuePair("need_source", "1"));
+        params.add(new BasicNameValuePair("need_html", "0"));
+        GetPageResponseWrapper response = invokeOldApi("pages.get", params, GetPageResponseWrapper.class);
         return response.getResponse();
     }
 
@@ -228,7 +245,7 @@ public class VkGateway {
 
     public static void main(String args[]) {//5566318
             String reqUrl = AUTH_URL.replace("{APP_ID}", "5856787")
-                    .replace("{PERMISSIONS}", "offline,photos,messages,manage,pages")
+                    .replace("{PERMISSIONS}", "offline,photos,messages,manage,pages,wall")
                     .replace("{REDIRECT_URI}", "https://oauth.vk.com/blank.html")
                     //.replace("{REDIRECT_URI}", "https://www.tut.by/")
                     .replace("{DISPLAY}", "page").replace("{API_VERSION}", API_VERSION);

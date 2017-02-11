@@ -10,19 +10,6 @@ import com.vk.tottenham.core.model.Player;
 
 public interface PlayerMapper {
 
-    /*@Insert("INSERT INTO student(userName, password, firstName,"
-            + "lastName, dateOfBirth, emailAddress) VALUES"
-            + "(#{userName},#{password}, #{firstName}, #{lastName},"
-            + "#{dateOfBirth}, #{emailAddress})")
-    @Options(useGeneratedKeys = true, keyProperty = "id", flushCache = true, keyColumn = "id")
-    public void insertPlayer(Player student);
-
-    @Select("SELECT USERNAME as userName, PASSWORD as password, "
-            + "FIRSTNAME as firstName, LASTNAME as lastName, "
-            + "DATEOFBIRTH as dateOfBirth, EMAILADDRESS as emailAddress "
-            + "FROM student WHERE userName = #{userName}")
-    public Player getStudentByUserName(String userName);*/
-
     @Select("SELECT id as id, name as name, "
             + "surname as surname, dateOfBirth as dateOfBirth, "
             + "position as position, dateJoined as dateJoined, "
@@ -64,7 +51,6 @@ public interface PlayerMapper {
             + "instagram as instagram, russianNameNom as russianNameNom, "
             + "statsPhoto as statsPhoto "
             + "FROM Players "
-            + "WHERE name=#{name} AND surname=#{surname} "
-            + "OR name=#{surname} AND surname=#{name}")
+            + "WHERE name=#{name} AND surname=#{surname}")
     Player findNameAndSurname(Player player);
 }

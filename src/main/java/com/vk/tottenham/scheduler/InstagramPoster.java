@@ -77,7 +77,8 @@ public class InstagramPoster extends SchedulerBase {
                                         : player.getInstagram();
                                 int lastSlashIndex = href.lastIndexOf("/");
                                 int questionIndex = href.lastIndexOf("?");
-                                String photoId = href.substring(lastSlashIndex + 1, questionIndex);
+                                String photoId = questionIndex >= 0 ? href.substring(lastSlashIndex + 1, questionIndex)
+                                        : href.substring(lastSlashIndex + 1);
                                 boolean isVideo = Boolean
                                         .valueOf(mediaObj.get("is_video").toString());
                                 if (!isVideo && !instagramService.exists("instagram:" + player.getInstagram() + ":" + photoId)) {
@@ -87,8 +88,6 @@ public class InstagramPoster extends SchedulerBase {
                                     instagramService.save(resource);
                                 }
                             }
-
-                            // System.out.println(o);
                         }
                     }
                 }

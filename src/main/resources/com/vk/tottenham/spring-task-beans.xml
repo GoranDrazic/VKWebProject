@@ -14,26 +14,15 @@
         <task:scheduled ref="birthdayPoster" method="execute" cron="0 0 10 * * ?"/>
         <task:scheduled ref="playerInfoUpdater" method="execute" cron="0 0 0 0/5 * ?"/>
         <task:scheduled ref="matchInfoLoader" method="execute" cron="0 0/5 * * * ?"/>
-        <task:scheduled ref="standingsUpdater" method="execute" cron="0 0/30 * * * ?"/>
-        <task:scheduled ref="playerStatsUpdater" method="execute" cron="0 0/30 * * * ?"/>
-        <task:scheduled ref="nextPreviousFixtureUpdater" method="execute" cron="0 0/30 * * * ?"/>
-        <!-- task:scheduled ref="nextPreviousFixtureUpdater" method="execute" cron="0/30 * * * * ?"/ -->
+        <task:scheduled ref="competitionPagesUpdater" method="execute" cron="0 0/30 * * * ?"/>
     </task:scheduled-tasks>
  
     <task:scheduler id="scheduler" pool-size="10"/>
 
-	<bean id="nextPreviousFixtureUpdater" class="com.vk.tottenham.scheduler.NextPreviousFixtureUpdater">
+	<bean id="competitionPagesUpdater" class="com.vk.tottenham.scheduler.CompetitionPagesUpdater">
 		<!--property name="testMode" value="true" / -->
 	</bean>
-
-	<bean id="playerStatsUpdater" class="com.vk.tottenham.scheduler.PlayerStatsUpdater">
-		<!--property name="testMode" value="true" / -->
-	</bean>
-
-    <bean id="standingsUpdater" class="com.vk.tottenham.scheduler.StandingsUpdater">
-		<!--property name="testMode" value="true" / -->
-	</bean>
-
+	
 	<bean id="twitterPoster" class="com.vk.tottenham.scheduler.TwitterPoster">
 		<property name="accounts">
 			<list>

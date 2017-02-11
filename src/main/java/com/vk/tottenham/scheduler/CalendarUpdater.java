@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.vk.tottenham.footballapi.FootballApiGateway;
 import com.vk.tottenham.footballapi.model.CompetitionName;
+import com.vk.tottenham.footballapi.model.CompetitionsResponse;
 import com.vk.tottenham.footballapi.model.Fixture;
 import com.vk.tottenham.footballapi.model.FixturesResponse;
 import com.vk.tottenham.mybatis.service.FixtureService;
+import com.vk.tottenham.utils.CompSeasonUtil;
 
 public class CalendarUpdater extends SchedulerBase {
 
@@ -21,8 +23,10 @@ public class CalendarUpdater extends SchedulerBase {
 
     @Override
     public void execute() {
+        CompetitionsResponse competitionsResponse = footballApiGateway.getCompetitions();
         for (CompetitionName competition : CompetitionName.values()) {
-            FixturesResponse fr = footballApiGateway.getFixtures(competition);
+            String compSeason = CompSeasonUtil.getCompSeason(competitionsResponse, competition);
+            FixturesResponse fr = footballApiGateway.getFixtures(competition.comp(), compSeason);
             List<Fixture> fixtures = fr.getContent();
             for (Fixture newFixture : fixtures) {
                 com.vk.tottenham.core.model.Fixture fixture = new com.vk.tottenham.core.model.Fixture();
