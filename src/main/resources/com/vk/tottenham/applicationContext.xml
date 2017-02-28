@@ -18,7 +18,7 @@
 	<import resource="spring-footballapi-client-beans.xml"/>
 
 	<context:component-scan base-package="com.vk.tottenham" />
-	<context:property-placeholder location="classpath:com/vk/tottenham/application.properties,database.properties" />
+	<context:property-placeholder location="classpath:com/vk/tottenham/application.properties,classpath:com/vk/tottenham/database.properties" />
 	<context:annotation-config/>
 
 </beans>

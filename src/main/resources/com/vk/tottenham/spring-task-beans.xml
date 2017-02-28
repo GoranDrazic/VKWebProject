@@ -15,6 +15,8 @@
         <task:scheduled ref="playerInfoUpdater" method="execute" cron="0 0 0 0/5 * ?"/>
         <task:scheduled ref="matchInfoLoader" method="execute" cron="0 0/5 * * * ?"/>
         <task:scheduled ref="competitionPagesUpdater" method="execute" cron="0 0/30 * * * ?"/>
+        <task:scheduled ref="spursArmyNewsLoader" method="execute" cron="0 0/20 * * * ?"/>
+        <task:scheduled ref="sportsRuNewsLoader" method="execute" cron="0 0/20 * * * ?"/>
     </task:scheduled-tasks>
  
     <task:scheduler id="scheduler" pool-size="10"/>
@@ -58,6 +60,14 @@
 	</bean>
 
 	<bean id="fantasyResultsPoster" class="com.vk.tottenham.scheduler.FantasyResultsPoster">
+		<!--property name="testMode" value="true" /-->
+	</bean>
+
+	<bean id="spursArmyNewsLoader" class="com.vk.tottenham.scheduler.SpursArmyNewsLoader">
+		<!-- property name="testMode" value="true" / -->
+	</bean>
+
+	<bean id="sportsRuNewsLoader" class="com.vk.tottenham.scheduler.SportsRuNewsLoader">
 		<!--property name="testMode" value="true" /-->
 	</bean>
 
