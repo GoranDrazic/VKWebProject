@@ -65,29 +65,40 @@ public class OfficialNewsLoader extends SchedulerBase {
     @Override
     public void execute() {
         List<Article> feedNews = loadNewsFeed();
+        List<String> postedArticles = new LinkedList<>();
         for (Article news : feedNews) {
-            if (articleService.findById(news.getId()) == null) {
-                LOGGER.info("New news: " + news.getTitle());
-
-                String photoId = photoDownloader.downloadPhoto(news.getThumbnail(), isTestMode);
-
-                List<String> galleryPhotoIds = loadGalleryPhotos(news.getLink());
-                if (galleryPhotoIds.isEmpty()) {
-                    galleryPhotoIds.add(photoId);
+            try {
+                if (articleService.findById(news.getId()) == null) {
+                    LOGGER.info("New news: " + news.getTitle());
+    
+                    String photoId = photoDownloader.downloadPhoto(news.getThumbnail(), isTestMode);
+    
+                    List<String> galleryPhotoIds = loadGalleryPhotos(news.getLink());
+                    if (galleryPhotoIds.isEmpty()) {
+                        galleryPhotoIds.add(photoId);
+                    }
+    
+                    String message = contentBuilder.buildPost(news.getTitle(), news.getContent(), news.getLink(), "tottenhamhotspur.com", Icon.ARTICLE);
+                    
+                    LOGGER.info("Posting: " + news.getTitle());
+                    vkGateway.postOnWall(getGroupId(), message.toString(), galleryPhotoIds, getClosestAvailableDate());
+                    postedArticles.add(news.getTitle());
+                    LOGGER.info("Saving: " + news.getTitle());
+                    articleService.save(news);
+                } else {
+                    LOGGER.info("Ignoring: " + news.getTitle());
                 }
-
-                String message = contentBuilder.buildPost(news.getTitle(), news.getContent(), news.getLink(), "tottenhamhotspur.com", Icon.ARTICLE);
-                
-                LOGGER.info("Posting: " + news.getTitle());
-                vkGateway.postOnWall(getGroupId(), message.toString(), galleryPhotoIds, getClosestAvailableDate());
-                vkGateway.sendChatMessage("Новая статья: «"
-                                + news.getTitle()
-                                + "».", getChatId());
-                LOGGER.info("Saving: " + news.getTitle());
-                articleService.save(news);
-            } else {
-                LOGGER.info("Ignoring: " + news.getTitle());
+            } catch (Exception e) {
+                throw new VkException("Exception loading news: " + news.getTitle(), e);
             }
+        }
+        if (postedArticles.size() > 0) {
+            StringBuilder articlePart = new StringBuilder();
+            for (String postedArticle : postedArticles) {
+                articlePart.append("• «").append(postedArticle).append("»\n");
+            }
+            vkGateway.sendChatMessage("Новые статьи: \n"
+                    + articlePart, getChatId());
         }
     }
 
