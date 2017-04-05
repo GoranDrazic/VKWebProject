@@ -15,11 +15,13 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.vk.tottenham.footballapi.model.CompetitionName;
 import com.vk.tottenham.footballapi.model.CompetitionsResponse;
 import com.vk.tottenham.footballapi.model.FixturesResponse;
 import com.vk.tottenham.footballapi.model.SquadResponse;
 import com.vk.tottenham.footballapi.model.StandingsResponse;
 import com.vk.tottenham.footballapi.model.StatsResponse;
+import com.vk.tottenham.utils.CompSeasonUtil;
 
 @Component("footballApiGateway")
 public class FootballApiGateway {
@@ -71,6 +73,17 @@ public class FootballApiGateway {
 
     public CompetitionsResponse getCompetitions() {
         return getCompetitions(competitionsPath);
+    }
+
+    public FixturesResponse getAllFixtures() {
+        CompetitionsResponse competitionsResponse = getCompetitions();
+        StringBuilder compSeasonBuilder = new StringBuilder(); 
+        for (CompetitionName competition : CompetitionName.values()) {
+            String compSeason = CompSeasonUtil.getCompSeason(competitionsResponse, competition);
+            compSeasonBuilder.append(compSeasonBuilder.length() == 0 ? "" : ",")
+                    .append(compSeason);
+        }
+        return getFixtures(fixturesPath, null, compSeasonBuilder.toString());
     }
 
     private CompetitionsResponse getCompetitions(String path) {
@@ -133,9 +146,11 @@ public class FootballApiGateway {
     private FixturesResponse getFixtures(String path, String comp, String compSeason) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("page", "0");
-        params.add("pageSize", "50");
+        params.add("pageSize", "70");
         params.add("compSeasons", compSeason);
-        params.add("comps", comp);
+        if (comp != null) {
+            params.add("comps", comp);
+        }
         params.add("teams", "21");
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(footballApiUrl + path).queryParams(params);

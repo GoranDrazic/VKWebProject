@@ -15,13 +15,19 @@
         <task:scheduled ref="playerInfoUpdater" method="execute" cron="0 0 0 0/5 * ?"/>
         <task:scheduled ref="matchInfoLoader" method="execute" cron="0 0/5 * * * ?"/>
         <task:scheduled ref="competitionPagesUpdater" method="execute" cron="0 0/30 * * * ?"/>
+        <!--task:scheduled ref="calendarPageUpdater" method="execute" cron="0/30 * * * * ?"/-->
         <task:scheduled ref="spursArmyNewsLoader" method="execute" cron="0 0/20 * * * ?"/>
         <task:scheduled ref="sportsRuNewsLoader" method="execute" cron="0 0/20 * * * ?"/>
+        <!--task:scheduled ref="sportExpressNewsLoader" method="execute" cron="0 0/20 * * * ?"/-->
     </task:scheduled-tasks>
  
     <task:scheduler id="scheduler" pool-size="10"/>
 
 	<bean id="competitionPagesUpdater" class="com.vk.tottenham.scheduler.CompetitionPagesUpdater">
+		<!--property name="testMode" value="true" / -->
+	</bean>
+
+	<bean id="calendarPageUpdater" class="com.vk.tottenham.scheduler.CalendarPageUpdater">
 		<!--property name="testMode" value="true" / -->
 	</bean>
 	
@@ -69,6 +75,10 @@
 
 	<bean id="sportsRuNewsLoader" class="com.vk.tottenham.scheduler.SportsRuNewsLoader">
 		<!--property name="testMode" value="true" /-->
+	</bean>
+
+	<bean id="sportExpressNewsLoader" class="com.vk.tottenham.scheduler.SportExpressNewsLoader">
+		<property name="testMode" value="true" />
 	</bean>
 
 	<bean id="matchInfoLoader" class="com.vk.tottenham.scheduler.MatchInfoLoader">
