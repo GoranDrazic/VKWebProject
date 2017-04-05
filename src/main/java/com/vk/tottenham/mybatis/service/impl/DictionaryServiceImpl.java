@@ -14,7 +14,8 @@ public class DictionaryServiceImpl implements DictionaryService {
 
     @Override
     public String translateInRussianNom(String term) {
-        return dictionaryMapper.translateInRussianNom(term);
+        String result = dictionaryMapper.translateInRussianNom(term);
+        return result != null ? result : term;
     }
 
 }
