@@ -28,4 +28,10 @@ public class CompetitionSeason {
     public void setId(double id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "CompetitionSeason [label=" + label + ", competition=" + competition
+                + ", id=" + id + "]";
+    }
 }

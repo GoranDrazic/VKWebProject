@@ -48,4 +48,11 @@ public class Competition {
     public void setCompSeasons(List<CompetitionSeason> compSeasons) {
         this.compSeasons = compSeasons;
     }
+
+    @Override
+    public String toString() {
+        return "Competition [abbreviation=" + abbreviation + ", description="
+                + description + ", level=" + level + ", id=" + id + ", compSeasons="
+                + compSeasons + "]";
+    }
 }

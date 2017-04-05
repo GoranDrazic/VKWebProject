@@ -127,14 +127,14 @@ public class CalendarTemplate extends TemplateBase {
             Fixture previous = null;
             for (Fixture fixture : fixtures) {
                 Date fixtureDate = fixture.getKickoff().getLabel();
-                if (fixtureDate.after(now)) {
+                if (fixtureDate != null && fixtureDate.after(now)) {
                     //next
                     if (next == null || next.getKickoff().getLabel().after(fixtureDate)) {
                         next = fixture;
                     }
                 } else {
                     //previous
-                    if (previous == null || previous.getKickoff().getLabel().before(fixtureDate)) {
+                    if (fixtureDate != null && (previous == null || previous.getKickoff().getLabel().before(fixtureDate))) {
                         previous = fixture;
                     }
                 }

@@ -40,4 +40,10 @@ public class Kickoff {
     public void setGmtOffset(double gmtOffset) {
         this.gmtOffset = gmtOffset;
     }
+
+    @Override
+    public String toString() {
+        return "Kickoff [completeness=" + completeness + ", millis=" + millis
+                + ", label=" + label + ", gmtOffset=" + gmtOffset + "]";
+    }
 }

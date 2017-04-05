@@ -46,4 +46,10 @@ public class Ground {
     public void setLocation(Location location) {
         this.location = location;
     }
+
+    @Override
+    public String toString() {
+        return "Ground [name=" + name + ", city=" + city + ", id=" + id
+                + ", capacity=" + capacity + ", location=" + location + "]";
+    }
 }

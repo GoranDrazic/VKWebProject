@@ -28,4 +28,10 @@ public class Gameweek {
     public void setGameweek(double gameweek) {
         this.gameweek = gameweek;
     }
+
+    @Override
+    public String toString() {
+        return "Gameweek [id=" + id + ", compSeason=" + compSeason + ", gameweek="
+                + gameweek + "]";
+    }
 }

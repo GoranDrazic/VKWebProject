@@ -121,4 +121,14 @@ public class Fixture {
         this.id = id;
     }
 
+    @Override
+    public String toString() {
+        return "Fixture [gameweek=" + gameweek + ", kickoff=" + kickoff + ", teams="
+                + teams + ", replay=" + replay + ", ground=" + ground
+                + ", neutralGround=" + neutralGround + ", status=" + status
+                + ", phase=" + phase + ", outcome=" + outcome + ", attendance="
+                + attendance + ", clock=" + clock + ", goals=" + goals + ", id=" + id
+                + "]";
+    }
+
 }

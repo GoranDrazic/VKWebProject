@@ -19,4 +19,9 @@ public class Clock {
     public void setLabel(String label) {
         this.label = label;
     }
+
+    @Override
+    public String toString() {
+        return "Clock [secs=" + secs + ", label=" + label + "]";
+    }
 }
