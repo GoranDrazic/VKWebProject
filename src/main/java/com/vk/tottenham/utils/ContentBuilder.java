@@ -8,13 +8,13 @@ import org.springframework.stereotype.Component;
 
 @Component("contentBuilder")
 public class ContentBuilder {
-    public String buildPost(String title, String content, String originalUrl, String site, Icon icon) {
+    public String buildPost(String title, String description, String content, String originalUrl, String site, Icon icon) {
         StringBuilder message = new StringBuilder();
         if (icon != null) {
             message.append(icon.getCode()).append(" ");
         }
-        message.append(title)
-                .append("\n\n");
+        message.append(title).append("\n\n");
+        message.append(description).append("\n\n");
         Document document = Jsoup.parse(content);
         Elements paragraphs = document.getElementsByTag("p");
         for (Element paragraph : paragraphs) {

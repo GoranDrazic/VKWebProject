@@ -78,7 +78,7 @@ public class OfficialNewsLoader extends SchedulerBase {
                         galleryPhotoIds.add(photoId);
                     }
     
-                    String message = contentBuilder.buildPost(news.getTitle(), news.getContent(), news.getLink(), "tottenhamhotspur.com", Icon.ARTICLE);
+                    String message = contentBuilder.buildPost(news.getTitle(), news.getDescription(), news.getContent(), news.getLink(), "tottenhamhotspur.com", Icon.ARTICLE);
                     
                     LOGGER.info("Posting: " + news.getTitle());
                     vkGateway.postOnWall(getGroupId(), message.toString(), galleryPhotoIds, getClosestAvailableDate());
