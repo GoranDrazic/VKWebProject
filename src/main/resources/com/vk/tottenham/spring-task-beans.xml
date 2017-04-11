@@ -19,9 +19,14 @@
         <task:scheduled ref="spursArmyNewsLoader" method="execute" cron="0 0/20 * * * ?"/>
         <task:scheduled ref="sportsRuNewsLoader" method="execute" cron="0 0/20 * * * ?"/>
         <!--task:scheduled ref="sportExpressNewsLoader" method="execute" cron="0 0/20 * * * ?"/-->
+        <task:scheduled ref="chatMessageResponder" method="execute" cron="0/20 * * * * ?"/>
     </task:scheduled-tasks>
  
     <task:scheduler id="scheduler" pool-size="10"/>
+
+	<bean id="chatMessageResponder" class="com.vk.tottenham.scheduler.ChatMessageResponder">
+		<!--property name="testMode" value="true" /-->
+	</bean>
 
 	<bean id="competitionPagesUpdater" class="com.vk.tottenham.scheduler.CompetitionPagesUpdater">
 		<!--property name="testMode" value="true" / -->

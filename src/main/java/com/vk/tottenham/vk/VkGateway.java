@@ -3,10 +3,8 @@ package com.vk.tottenham.vk;
 import java.awt.Desktop;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -23,27 +21,27 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.vk.tottenham.exception.VkException;
 import com.vk.tottenham.vk.model.CreateAlbumResponseWrapper;
 import com.vk.tottenham.vk.model.GetAlbumsResponseWrapper;
+import com.vk.tottenham.vk.model.GetHistoryResponseWrapper;
 import com.vk.tottenham.vk.model.GetPageResponse;
 import com.vk.tottenham.vk.model.GetPageResponseWrapper;
 import com.vk.tottenham.vk.model.GetPhotosResponseWrapper;
 import com.vk.tottenham.vk.model.GetPostsResponseWrapper;
 import com.vk.tottenham.vk.model.GetUploaderServerResponseWrapper;
+import com.vk.tottenham.vk.model.GetUsersResponseWrapper;
+import com.vk.tottenham.vk.model.Message;
 import com.vk.tottenham.vk.model.Photo;
 import com.vk.tottenham.vk.model.Post;
 import com.vk.tottenham.vk.model.SavePageResponseWrapper;
 import com.vk.tottenham.vk.model.SavePhotosResponse;
 import com.vk.tottenham.vk.model.SendMessageResponseWrapper;
+import com.vk.tottenham.vk.model.User;
 import com.vk.tottenham.vk.model.WallPostResponseWrapper;
 
 @Component("vkGateway")
@@ -129,6 +127,23 @@ public class VkGateway {
             params.add(new BasicNameValuePair("attachment", "photo-" + groupId + "_" + photoId));
         }
         invokeOldApi("messages.send", params, SendMessageResponseWrapper.class);
+    }
+
+    public List<Message> getChatMessages(String chatId) {
+        List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("peer_id", chatId));
+        params.add(new BasicNameValuePair("count", "10"));
+        //params.add(new BasicNameValuePair("start_message_id", start_message_id));
+        GetHistoryResponseWrapper response = invokeOldApi("messages.getHistory", params, GetHistoryResponseWrapper.class);
+        return response.getResponse().getItems();
+    }
+
+    public User getUser(long userId) {
+        List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("user_ids", userId + ""));
+        GetUsersResponseWrapper response = invokeOldApi("users.get", params, GetUsersResponseWrapper.class);
+        List<User> users = response.getResponse();
+        return users.size() > 0 ? users.get(0) : null;
     }
     
     public String savePhoto(String server, String photosList, String aid,
