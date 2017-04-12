@@ -55,7 +55,7 @@ public class TwitterPoster extends SchedulerBase {
                     if(!twitterService.exists("twitter:" + account + ":" + href)) {
                         String photoId = null;
                         if (imgSrc != null) {
-                            photoId = photoDownloader.downloadPhoto(imgSrc, isTestMode);
+                            photoId = photoDownloader.downloadPhoto(imgSrc, isTestMode).getPhotoId();
                         }
                         vkGateway.sendChatMessage(account + " твитнул: «"
                                 + twitText

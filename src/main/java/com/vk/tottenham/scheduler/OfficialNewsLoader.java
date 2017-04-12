@@ -6,13 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -25,18 +18,17 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.vk.tottenham.core.model.Article;
-import com.vk.tottenham.core.model.RSS;
 import com.vk.tottenham.exception.VkException;
 import com.vk.tottenham.mybatis.service.ArticleService;
 import com.vk.tottenham.utils.ContentBuilder;
 import com.vk.tottenham.utils.Icon;
+import com.vk.tottenham.utils.NewsFeedLoader;
 import com.vk.tottenham.utils.PhotoDownloader;
 
 public class OfficialNewsLoader extends SchedulerBase {
 
     private static final Logger LOGGER = Logger.getLogger(OfficialNewsLoader.class);
     private static final String BASE_URL = "http://www.tottenhamhotspur.com";
-    private static final String FEED_URL = "http://www.tottenhamhotspur.com/application/iphone/latestnews.xml";
 
     private static SimpleDateFormat formatter = new SimpleDateFormat(
             "d MMMMM yyyy HH:mm");
@@ -45,14 +37,14 @@ public class OfficialNewsLoader extends SchedulerBase {
         formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    private static HttpClient client = HttpClientBuilder.create().build();
-
     private static ObjectMapper mapper = new ObjectMapper();
 
     static {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
     }
+    
+    private static NewsFeedLoader feedLoader = new NewsFeedLoader();
 
     @Autowired
     @Qualifier("articleService")
@@ -64,14 +56,14 @@ public class OfficialNewsLoader extends SchedulerBase {
 
     @Override
     public void execute() {
-        List<Article> feedNews = loadNewsFeed();
+        List<Article> feedNews = feedLoader.loadNewsFeed();
         List<String> postedArticles = new LinkedList<>();
         for (Article news : feedNews) {
             try {
                 if (articleService.findById(news.getId()) == null) {
                     LOGGER.info("New news: " + news.getTitle());
     
-                    String photoId = photoDownloader.downloadPhoto(news.getThumbnail(), isTestMode);
+                    String photoId = photoDownloader.downloadPhoto(news.getThumbnail(), isTestMode).getPhotoId();
     
                     List<String> galleryPhotoIds = loadGalleryPhotos(news.getLink());
                     if (galleryPhotoIds.isEmpty()) {
@@ -102,23 +94,6 @@ public class OfficialNewsLoader extends SchedulerBase {
         }
     }
 
-    private List<Article> loadNewsFeed() {
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(RSS.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-
-            HttpGet request = new HttpGet(FEED_URL);
-            HttpResponse response = client.execute(request);
-
-            RSS rss = (RSS) jaxbUnmarshaller
-                    .unmarshal(response.getEntity().getContent());
-            response.getEntity().getContent().close();
-            return rss.getChannel().getItem();
-        } catch (Exception e) {
-            throw new VkException("Exception loading data from feed.", e);
-        }
-    }
-
     private List<String> loadGalleryPhotos(String link) {
         try {
             List<String> photoIds = new LinkedList<>();
@@ -128,7 +103,7 @@ public class OfficialNewsLoader extends SchedulerBase {
                 Elements images = imageContainer.getElementsByTag("img");
                 for (Element image : images) {
                     String imageUrl = BASE_URL + image.attr("src").trim().replace("\n", "");
-                    String photoId = photoDownloader.downloadPhoto(imageUrl, isTestMode); 
+                    String photoId = photoDownloader.downloadPhoto(imageUrl, isTestMode).getPhotoId(); 
                     photoIds.add(photoId);
                 }
             }

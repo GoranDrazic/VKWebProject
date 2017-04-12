@@ -1,14 +1,18 @@
 package com.vk.tottenham.utils;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+
+import javax.imageio.ImageIO;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -28,6 +32,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.vk.tottenham.core.model.VKContext;
 import com.vk.tottenham.exception.VkException;
 import com.vk.tottenham.vk.VkGateway;
+import com.vk.tottenham.vk.model.PhotoDescription;
 import com.vk.tottenham.vk.model.UploadResult;
 
 @Component("photoDownloader")
@@ -48,11 +53,11 @@ public class PhotoDownloader {
         mapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
     }
 
-    public String downloadPhoto(String href, boolean isTestMode) {
+    public PhotoDescription downloadPhoto(String href, boolean isTestMode) {
         return downloadPhoto(href, vkContext.getAlbumId(isTestMode), isTestMode);
     }
 
-    public String downloadPhoto(String href, String albumId, boolean isTestMode) {
+    public PhotoDescription downloadPhoto(String href, String albumId, boolean isTestMode) {
         String uploadUrl = vkGateway.getUploadServer(vkContext.getGroupId(isTestMode),
                 albumId);
 
@@ -69,18 +74,30 @@ public class PhotoDownloader {
         return imageId.substring(imageId.lastIndexOf("/") + 1);
     }
 
-    private String uploadPhoto(String url, String localFileName, String uploadUrl, String albumId, boolean isTestMode) {
+    private PhotoDescription uploadPhoto(String url, String localFileName, String uploadUrl, String albumId, boolean isTestMode) {
+        PhotoDescription photo = new PhotoDescription();
+
         String localPhoto = "/Users/alexandrfeskoff/Downloads/" + localFileName;
         LOGGER.info("Loading photo: " + localPhoto);
         saveImage(url, localPhoto);
+        
+        BufferedImage bimg;
+        try {
+            bimg = ImageIO.read(new File(localPhoto));
+            photo.setWidth(bimg.getWidth());
+            photo.setWidth(bimg.getHeight());
+        } catch (IOException e) {}
 
         UploadResult uploadResult = uploadPhotos(uploadUrl, localPhoto);
 
         deleteLocalPhoto(localPhoto);
 
-        return vkGateway.savePhoto(uploadResult.getServer(),
+        String photoId = vkGateway.savePhoto(uploadResult.getServer(),
                 uploadResult.getPhotosList(), uploadResult.getAid(),
                 uploadResult.getHash(), albumId, vkContext.getGroupId(isTestMode));
+        photo.setPhotoId(photoId);
+
+        return photo;
     }
 
     private void deleteLocalPhoto(String localPhoto) {

@@ -7,6 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.vk.tottenham.core.model.Article;
+import com.vk.tottenham.utils.NewsFeedLoader;
+import com.vk.tottenham.utils.PageBuilder;
+import com.vk.tottenham.utils.PhotoDownloader;
 import com.vk.tottenham.vk.model.Message;
 import com.vk.tottenham.vk.model.User;
 
@@ -32,7 +38,17 @@ public class ChatMessageResponder extends SchedulerBase {
     private static final String FUCK_SOMEONE_ELSE_MESSAGE = ", иди нахуй!";
     private static final String LIKEWISE_RESPONSE = "Присоединяюсь!";
 
+    private static final String CREATE_ARTICLE_PAGE_MESSAGE = "[id377937124|Бот], запили страничку для статьи";
+
     private Map<Long, List<String>> messageResponses = new HashMap<>(); 
+
+    private static NewsFeedLoader feedLoader = new NewsFeedLoader();
+    
+    @Autowired
+    private PageBuilder pageBuilder;
+
+    @Autowired
+    private PhotoDownloader photoDownloader;
 
     public ChatMessageResponder() {
         super();
@@ -75,6 +91,28 @@ public class ChatMessageResponder extends SchedulerBase {
                     vkGateway.sendChatMessage(messageResponses.get(message.getUserId()).get(random), getChatId());
                 } else if (message.getBody().endsWith(FUCK_SOMEONE_ELSE_MESSAGE) && !FUCK_YOU_MESSAGE.equals(message.getBody())) {
                     vkGateway.sendChatMessage(LIKEWISE_RESPONSE, getChatId());
+                } else if (message.getBody().startsWith(CREATE_ARTICLE_PAGE_MESSAGE)) {
+                    String titlePhrase = message.getBody().replace(CREATE_ARTICLE_PAGE_MESSAGE, "").trim();
+                    System.out.println(titlePhrase);
+                    List<Article> articles = feedLoader.loadNewsFeed();
+                    boolean found = false;
+                    for (Article article : articles) {
+                        if (article.getTitle().contains(titlePhrase)) {
+                            String pageContent = pageBuilder.buildPost(article.getTitle(),
+                                    article.getDescription(), article.getContent(),
+                                    article.getLink(), "tottenhamhotspur.com", getGroupId(), isTestMode);
+                            int pageId = vkGateway.savePage(getGroupId(), null, 
+                                    article.getTitle(), 
+                                    pageContent);
+                            String photoId = photoDownloader.downloadPhoto(article.getThumbnail(), isTestMode).getPhotoId();
+                            vkGateway.postOnWall(getGroupId(), article.getTitle(), photoId, String.valueOf(pageId), getClosestAvailableDate());
+                            vkGateway.sendChatMessage("Статья «" + article.getTitle() + "» сконвертирована в страничку и запостана.", getChatId());
+                            found = true;
+                        }
+                    }
+                    if(!found) {
+                        vkGateway.sendChatMessage("Статья по ключевым словам «" + titlePhrase + "» не найдена.", getChatId());
+                    }
                 }
             }
         }

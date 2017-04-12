@@ -114,6 +114,22 @@ public class VkGateway {
         params.add(new BasicNameValuePair("attachments", StringUtil.join(attachments, ",")));
         invokeOldApi("wall.post", params, WallPostResponseWrapper.class);
     }
+
+    public void postOnWall(String groupId, String message, String photoId, String pageId, long lastPostDate) {
+        List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("owner_id", "-" + groupId));
+        params.add(new BasicNameValuePair("from_group", "1"));
+        params.add(new BasicNameValuePair("message", message));
+        if (lastPostDate != -1) {
+            params.add(new BasicNameValuePair("publish_date", "" + lastPostDate / 1000));
+        }
+        List<String> attachments = new LinkedList<>();
+        attachments.add("photo-" + groupId + "_" + photoId);
+        attachments.add("page-" + groupId + "_" + pageId);
+
+        params.add(new BasicNameValuePair("attachments", StringUtil.join(attachments, ",")));
+        invokeOldApi("wall.post", params, WallPostResponseWrapper.class);
+    }
     
     public void sendChatMessage(String message, String chatId) {
         sendChatMessage(message, chatId, null, null);

@@ -82,7 +82,7 @@ public class InstagramPoster extends SchedulerBase {
                                 boolean isVideo = Boolean
                                         .valueOf(mediaObj.get("is_video").toString());
                                 if (!isVideo && !instagramService.exists("instagram:" + player.getInstagram() + ":" + photoId)) {
-                                    photoIds.put(photoDownloader.downloadPhoto(href, isTestMode), caption);
+                                    photoIds.put(photoDownloader.downloadPhoto(href, isTestMode).getPhotoId(), caption);
                                     Resource resource = new Resource();
                                     resource.setId("instagram:" + player.getInstagram() + ":" + photoId);
                                     instagramService.save(resource);
