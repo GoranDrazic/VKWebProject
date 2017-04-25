@@ -73,14 +73,16 @@ public class CalendarPageUpdater extends SchedulerBase {
         }
 
         LinkedList<Fixture> notScheduled = monthToFixture.remove(UNKNOWN_DATE);
-        monthToFixture.put(UNKNOWN_DATE, notScheduled);
+        if (notScheduled != null) {
+            monthToFixture.put(UNKNOWN_DATE, notScheduled);
+        }
 
         StringBuilder builder = new StringBuilder();
         for (Entry<String, LinkedList<Fixture>> monthOfFixtures : monthToFixture.entrySet()) {
             Fixture lastFixture = monthOfFixtures.getValue().getLast();
             Date lastFixtureDate = lastFixture.getKickoff().getLabel() != null ? lastFixture.getKickoff().getLabel() : null;
             String show = lastFixtureDate == null || lastFixtureDate.after(
-                    new Date(System.currentTimeMillis() + FIFTEEN_DAYS)) ? "show|" : "";
+                    new Date(System.currentTimeMillis() - FIFTEEN_DAYS)) ? "show|" : "";
             builder.append(MONTH_START_TEMPLATE.replaceAll("##month##", monthOfFixtures.getKey()).replace("##show##", show));
             for (Fixture fixture : monthOfFixtures.getValue()) {
                 Date label = fixture.getKickoff().getLabel();
