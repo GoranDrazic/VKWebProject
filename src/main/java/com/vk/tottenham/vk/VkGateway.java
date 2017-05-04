@@ -164,6 +164,12 @@ public class VkGateway {
     
     public String savePhoto(String server, String photosList, String aid,
             String hash, String albumId, String groupId) {
+        return savePhoto(server, photosList, aid, hash, albumId, groupId, null);
+        
+    }
+
+    public String savePhoto(String server, String photosList, String aid,
+            String hash, String albumId, String groupId, String description) {
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("server", server));
         params.add(new BasicNameValuePair("photos_list", photosList));
@@ -171,6 +177,9 @@ public class VkGateway {
         params.add(new BasicNameValuePair("hash", hash));
         params.add(new BasicNameValuePair("album_id", albumId));
         params.add(new BasicNameValuePair("group_id", groupId));
+        if (description != null) {
+            params.add(new BasicNameValuePair("caption", description));
+        }
         SavePhotosResponse response = invokeOldApi("photos.save", params, SavePhotosResponse.class);
         return response.getResponse().get(0).getId();
         

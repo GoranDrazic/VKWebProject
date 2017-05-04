@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,7 +23,7 @@ public class ChatMessageResponder extends SchedulerBase {
     private static long lastDate = new Date().getTime() / 1000;
     private static Map<Long, User> userMap = new HashMap<>();
 
-    private static final String FUCK_YOU_MESSAGE = "[id377937124|Бот], иди нахуй!";
+    private static final String FUCK_YOU_MESSAGE = "Бот, иди нахуй!";
 
     private static final String FUCK_YOU_RESPONSE = "Сам иди нахуй!";
     private static final String EAT_CAKE_RESPONSE = "Сам иди! Пирожки закончились?";
@@ -38,11 +40,13 @@ public class ChatMessageResponder extends SchedulerBase {
     private static final String FUCK_SOMEONE_ELSE_MESSAGE = ", иди нахуй!";
     private static final String LIKEWISE_RESPONSE = "Присоединяюсь!";
 
-    private static final String CREATE_ARTICLE_PAGE_MESSAGE = "[id377937124|Бот], запили страничку для статьи";
+    private static final String CREATE_ARTICLE_PAGE_MESSAGE = "Бот, запили страничку для статьи";
 
     private Map<Long, List<String>> messageResponses = new HashMap<>(); 
 
     private static NewsFeedLoader feedLoader = new NewsFeedLoader();
+
+    Pattern pattern = Pattern.compile("Бот, запили страничку для статьи (.*?) и назови её (.*?)\\.");
     
     @Autowired
     private PageBuilder pageBuilder;
@@ -92,7 +96,11 @@ public class ChatMessageResponder extends SchedulerBase {
                 } else if (message.getBody().endsWith(FUCK_SOMEONE_ELSE_MESSAGE) && !FUCK_YOU_MESSAGE.equals(message.getBody())) {
                     vkGateway.sendChatMessage(LIKEWISE_RESPONSE, getChatId());
                 } else if (message.getBody().startsWith(CREATE_ARTICLE_PAGE_MESSAGE)) {
-                    String titlePhrase = message.getBody().replace(CREATE_ARTICLE_PAGE_MESSAGE, "").trim();
+                    Matcher matcher = pattern.matcher(message.getBody());
+                    matcher.find();
+
+                    String titlePhrase = matcher.group(1).trim();
+                    String articleNewName = matcher.group(2).trim();
                     System.out.println(titlePhrase);
                     List<Article> articles = feedLoader.loadNewsFeed();
                     boolean found = false;
@@ -102,7 +110,7 @@ public class ChatMessageResponder extends SchedulerBase {
                                     article.getDescription(), article.getContent(),
                                     article.getLink(), "tottenhamhotspur.com", getGroupId(), isTestMode);
                             int pageId = vkGateway.savePage(getGroupId(), null, 
-                                    article.getTitle(), 
+                                    articleNewName, 
                                     pageContent);
                             String photoId = photoDownloader.downloadPhoto(article.getThumbnail(), isTestMode).getPhotoId();
                             vkGateway.postOnWall(getGroupId(), article.getTitle(), photoId, String.valueOf(pageId), getClosestAvailableDate());
