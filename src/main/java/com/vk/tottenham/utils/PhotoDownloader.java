@@ -54,16 +54,16 @@ public class PhotoDownloader {
     }
 
     public PhotoDescription downloadPhoto(String href, boolean isTestMode) {
-        return downloadPhoto(href, vkContext.getAlbumId(isTestMode), isTestMode);
+        return downloadPhoto(href, vkContext.getAlbumId(isTestMode), isTestMode, false);
     }
 
-    public PhotoDescription downloadPhoto(String href, String albumId, boolean isTestMode) {
-        return downloadPhoto(href, albumId, isTestMode, null);
+    public PhotoDescription downloadPhoto(String href, String albumId, boolean isTestMode, boolean useMainGroup) {
+        return downloadPhoto(href, albumId, isTestMode, null, useMainGroup);
     }
 
-    public PhotoDescription downloadPhoto(String href, String albumId, boolean isTestMode, String description) {
-        String uploadUrl = vkGateway.getUploadServer(vkContext.getGroupId(isTestMode),
-                albumId);
+    public PhotoDescription downloadPhoto(String href, String albumId, boolean isTestMode, String description, boolean useMainGroup) {
+        String groupId = useMainGroup ? vkContext.getGroupId(isTestMode) : vkContext.getMediaGroupId(isTestMode);
+        String uploadUrl = vkGateway.getUploadServer(groupId, albumId);
 
         String imageId = getImageId(href);
 

@@ -95,13 +95,15 @@
 
 	<bean id="testVkConfig" class="com.vk.tottenham.core.model.VKConfig">
 		<constructor-arg value="125436039"/>
+		<constructor-arg value="125436039"/>
 		<constructor-arg value="234341611"/>
 		<constructor-arg value="377937124" />
 	</bean>
 
 	<bean id="vkConfig" class="com.vk.tottenham.core.model.VKConfig">
 		<constructor-arg value="15474997" />
-		<constructor-arg value="239420841" />
+		<constructor-arg value="146871984" />
+		<constructor-arg value="243675948" />
 		<constructor-arg value="2000000001" />
 	</bean>
 </beans>

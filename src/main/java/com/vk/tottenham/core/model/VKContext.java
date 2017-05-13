@@ -18,6 +18,10 @@ public class VKContext {
         return isTestMode ? testVkConfig.getGroupId() :  vkConfig.getGroupId();
     }
 
+    public String getMediaGroupId(boolean isTestMode) {
+        return isTestMode ? testVkConfig.getMediaGroupId() :  vkConfig.getMediaGroupId();
+    }
+
     public String getAlbumId(boolean isTestMode) {
         return isTestMode ? testVkConfig.getAlbumId() :  vkConfig.getAlbumId();
     }

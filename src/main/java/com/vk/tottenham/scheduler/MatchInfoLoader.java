@@ -123,7 +123,7 @@ public class MatchInfoLoader extends SchedulerBase {
             List<Slide> slides = summary.getSlides();
             for (Slide slide : slides) {
                 String largePhoto = slide.getImgUrl().replace("l.jpg", "x.jpg");
-                photoDownloader.downloadPhoto(largePhoto, fixture.getAlbumId(), isTestMode);
+                photoDownloader.downloadPhoto(largePhoto, fixture.getAlbumId(), isTestMode, true);
             }
         }
     }
