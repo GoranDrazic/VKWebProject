@@ -67,7 +67,7 @@ public class PhotoDownloader {
 
         String imageId = getImageId(href);
 
-        return uploadPhoto(href, imageId, uploadUrl, albumId, isTestMode, description);
+        return uploadPhoto(href, imageId, uploadUrl, albumId, groupId, description);
     }
 
     private String getImageId(String href) {
@@ -78,7 +78,7 @@ public class PhotoDownloader {
         return imageId.substring(imageId.lastIndexOf("/") + 1);
     }
 
-    private PhotoDescription uploadPhoto(String url, String localFileName, String uploadUrl, String albumId, boolean isTestMode, String description) {
+    private PhotoDescription uploadPhoto(String url, String localFileName, String uploadUrl, String albumId, String groupId, String description) {
         PhotoDescription photo = new PhotoDescription();
 
         String localPhoto = "/Users/alexandrfeskoff/Downloads/" + localFileName;
@@ -98,7 +98,7 @@ public class PhotoDownloader {
 
         String photoId = vkGateway.savePhoto(uploadResult.getServer(),
                 uploadResult.getPhotosList(), uploadResult.getAid(),
-                uploadResult.getHash(), albumId, vkContext.getGroupId(isTestMode), description);
+                uploadResult.getHash(), albumId, groupId, description);
         photo.setPhotoId(photoId);
 
         return photo;
