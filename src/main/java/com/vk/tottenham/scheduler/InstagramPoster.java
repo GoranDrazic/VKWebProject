@@ -99,7 +99,7 @@ public class InstagramPoster extends SchedulerBase {
                 captions.append("\n").append(photo.getValue());
                 if (batch.size() == 10) {
                     captions.append("\n\n#social@tottenham_hotspur");
-                    vkGateway.postOnWall(getGroupId(),
+                    vkGateway.postOnWall(getGroupId(), getMediaGroupId(),
                             captions.toString(),
                             batch, getClosestAvailableDate());
                     vkGateway.sendChatMessage(
@@ -112,7 +112,7 @@ public class InstagramPoster extends SchedulerBase {
             }
             if (batch.size() > 0) {
                 captions.append("\n\n#social@tottenham_hotspur");
-                vkGateway.postOnWall(getGroupId(),
+                vkGateway.postOnWall(getGroupId(), getMediaGroupId(), 
                         captions.toString(),
                         batch, getClosestAvailableDate());
                 vkGateway.sendChatMessage(

@@ -93,13 +93,13 @@ public class VkGateway {
         return response.getResponse().getUploadUrl();
     }
 
-    public void postOnWall(String groupId, String message, String photoId, long lastPostDate) {
+    public void postOnWall(String groupId, String mediaGroupId, String message, String photoId, long lastPostDate) {
         List<String> photoIds = new LinkedList<>();
         photoIds.add(photoId);
-        postOnWall(groupId, message, photoIds, lastPostDate);
+        postOnWall(groupId, mediaGroupId, message, photoIds, lastPostDate);
     }
 
-    public void postOnWall(String groupId, String message, List<String> photoIds, long lastPostDate) {
+    public void postOnWall(String groupId, String mediaGroupId, String message, List<String> photoIds, long lastPostDate) {
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("owner_id", "-" + groupId));
         params.add(new BasicNameValuePair("from_group", "1"));
@@ -109,13 +109,13 @@ public class VkGateway {
         }
         List<String> attachments = new LinkedList<>();
         for (String photoId : photoIds) {
-            attachments.add("photo-" + groupId + "_" + photoId);
+            attachments.add("photo-" + mediaGroupId + "_" + photoId);
         }
         params.add(new BasicNameValuePair("attachments", StringUtil.join(attachments, ",")));
         invokeOldApi("wall.post", params, WallPostResponseWrapper.class);
     }
 
-    public void postOnWall(String groupId, String message, String photoId, String pageId, long lastPostDate) {
+    public void postOnWall(String groupId, String mediaGroupId, String message, String photoId, String pageId, long lastPostDate) {
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("owner_id", "-" + groupId));
         params.add(new BasicNameValuePair("from_group", "1"));
@@ -124,7 +124,7 @@ public class VkGateway {
             params.add(new BasicNameValuePair("publish_date", "" + lastPostDate / 1000));
         }
         List<String> attachments = new LinkedList<>();
-        attachments.add("photo-" + groupId + "_" + photoId);
+        attachments.add("photo-" + mediaGroupId + "_" + photoId);
         attachments.add("page-" + groupId + "_" + pageId);
 
         params.add(new BasicNameValuePair("attachments", StringUtil.join(attachments, ",")));
@@ -198,7 +198,7 @@ public class VkGateway {
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("owner_id", "-" + groupId));
         params.add(new BasicNameValuePair("album_id", albumId));
-        params.add(new BasicNameValuePair("count", "500"));
+        params.add(new BasicNameValuePair("count", "1000"));
         GetAlbumsResponseWrapper response = invokeOldApi("photos.get", params, GetAlbumsResponseWrapper.class);
         return response.getResponse().getItems().size();
     }

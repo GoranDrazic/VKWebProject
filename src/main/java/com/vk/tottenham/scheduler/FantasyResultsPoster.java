@@ -86,7 +86,7 @@ public class FantasyResultsPoster extends SchedulerBase {
                 messageBuilder.append("Не забывайте следить за эффективностью своей команды!");
 
                 //456243703
-                vkGateway.postOnWall(getGroupId(), messageBuilder.toString(), "456240248", -1);
+                vkGateway.postOnWall(getGroupId(), getGroupId(), messageBuilder.toString(), "456240248", -1);
             }
         } catch (IOException e) {
             // TODO Auto-generated catch block

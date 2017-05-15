@@ -15,16 +15,17 @@ import com.vk.tottenham.core.model.RSS;
 import com.vk.tottenham.exception.VkException;
 
 public class NewsFeedLoader {
-    private static final String FEED_URL = "http://www.tottenhamhotspur.com/application/iphone/latestnews.xml";
+    public static final String OFFICIAL_FEED_URL = "http://www.tottenhamhotspur.com/application/iphone/latestnews.xml";
+    public static final String FAPL_FEED_URL = "http://fapl.ru/tags/%D2%EE%F2%F2%E5%ED%F5%FD%EC/rss/";
 
     private static HttpClient client = HttpClientBuilder.create().build();
 
-    public List<Article> loadNewsFeed() {
+    public List<Article> loadNewsFeed(String url) {
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(RSS.class);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 
-            HttpGet request = new HttpGet(FEED_URL);
+            HttpGet request = new HttpGet(url);
             HttpResponse response = client.execute(request);
 
             RSS rss = (RSS) jaxbUnmarshaller

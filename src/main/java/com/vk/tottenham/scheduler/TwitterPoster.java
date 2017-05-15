@@ -59,7 +59,7 @@ public class TwitterPoster extends SchedulerBase {
                         }
                         vkGateway.sendChatMessage(account + " твитнул: «"
                                 + twitText
-                                + "».", getChatId(), photoId, getGroupId());
+                                + "».", getChatId(), photoId, getMediaGroupId());
 
                         Resource resource = new Resource();
                         resource.setId("twitter:" + account + ":" + href);

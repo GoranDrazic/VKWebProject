@@ -28,6 +28,10 @@ public abstract class SchedulerBase {
         return vkContext.getGroupId(isTestMode);
     }
 
+    public String getMediaGroupId() {
+        return vkContext.getMediaGroupId(isTestMode);
+    }
+
     public String getAlbumId() {
         return vkContext.getAlbumId(isTestMode);
     }

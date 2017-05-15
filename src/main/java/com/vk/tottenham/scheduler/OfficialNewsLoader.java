@@ -1,5 +1,7 @@
 package com.vk.tottenham.scheduler;
 
+import static com.vk.tottenham.utils.NewsFeedLoader.OFFICIAL_FEED_URL;
+
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
@@ -56,7 +58,7 @@ public class OfficialNewsLoader extends SchedulerBase {
 
     @Override
     public void execute() {
-        List<Article> feedNews = feedLoader.loadNewsFeed();
+        List<Article> feedNews = feedLoader.loadNewsFeed(OFFICIAL_FEED_URL);
         List<String> postedArticles = new LinkedList<>();
         for (Article news : feedNews) {
             try {
@@ -73,7 +75,7 @@ public class OfficialNewsLoader extends SchedulerBase {
                     String message = contentBuilder.buildPost(news.getTitle(), news.getDescription(), news.getContent(), news.getLink(), "tottenhamhotspur.com", Icon.ARTICLE);
                     
                     LOGGER.info("Posting: " + news.getTitle());
-                    vkGateway.postOnWall(getGroupId(), message.toString(), galleryPhotoIds, getClosestAvailableDate());
+                    vkGateway.postOnWall(getGroupId(), getMediaGroupId(), message.toString(), galleryPhotoIds, getClosestAvailableDate());
                     postedArticles.add(news.getTitle());
                     LOGGER.info("Saving: " + news.getTitle());
                     articleService.save(news);

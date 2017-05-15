@@ -1,5 +1,7 @@
 package com.vk.tottenham.scheduler;
 
+import static com.vk.tottenham.utils.NewsFeedLoader.OFFICIAL_FEED_URL;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -102,18 +104,18 @@ public class ChatMessageResponder extends SchedulerBase {
                     String titlePhrase = matcher.group(1).trim();
                     String articleNewName = matcher.group(2).trim();
                     System.out.println(titlePhrase);
-                    List<Article> articles = feedLoader.loadNewsFeed();
+                    List<Article> articles = feedLoader.loadNewsFeed(OFFICIAL_FEED_URL);
                     boolean found = false;
                     for (Article article : articles) {
                         if (article.getTitle().contains(titlePhrase)) {
                             String pageContent = pageBuilder.buildPost(article.getTitle(),
                                     article.getDescription(), article.getContent(),
-                                    article.getLink(), "tottenhamhotspur.com", getGroupId(), isTestMode);
+                                    article.getLink(), "tottenhamhotspur.com", getMediaGroupId(), isTestMode);
                             int pageId = vkGateway.savePage(getGroupId(), null, 
                                     articleNewName, 
                                     pageContent);
                             String photoId = photoDownloader.downloadPhoto(article.getThumbnail(), isTestMode).getPhotoId();
-                            vkGateway.postOnWall(getGroupId(), article.getTitle(), photoId, String.valueOf(pageId), getClosestAvailableDate());
+                            vkGateway.postOnWall(getGroupId(), getMediaGroupId(), article.getTitle(), photoId, String.valueOf(pageId), getClosestAvailableDate());
                             vkGateway.sendChatMessage("Статья «" + article.getTitle() + "» сконвертирована в страничку и запостана.", getChatId());
                             found = true;
                         }
