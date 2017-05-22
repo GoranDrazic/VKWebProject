@@ -56,4 +56,9 @@ public class FixtureServiceImpl implements FixtureService {
     public Fixture getNextFixture(String competition) {
         return fixtureMapper.getNextFixture(competition);
     }
+
+    @Override
+    public Fixture getCurrentFixture() {
+        return fixtureMapper.getCurrentFixture();
+    }
 }

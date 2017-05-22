@@ -17,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.vk.tottenham.footballapi.model.CompetitionName;
 import com.vk.tottenham.footballapi.model.CompetitionsResponse;
+import com.vk.tottenham.footballapi.model.Fixture;
 import com.vk.tottenham.footballapi.model.FixturesResponse;
 import com.vk.tottenham.footballapi.model.SquadResponse;
 import com.vk.tottenham.footballapi.model.StandingsResponse;
@@ -46,6 +47,9 @@ public class FootballApiGateway {
 
     @Value("${com.vk.tottenham.footballapi.competitionsPath}")
     private String competitionsPath;
+    
+    @Value("${com.vk.tottenham.footballapi.fixturePath}")
+    private String fixturePath;
 
     @Autowired
     @Qualifier("footballApiRestTemplate")
@@ -73,6 +77,10 @@ public class FootballApiGateway {
 
     public CompetitionsResponse getCompetitions() {
         return getCompetitions(competitionsPath);
+    }
+
+    public Fixture getFixture(int id) {
+        return getFixture(fixturePath, id); 
     }
 
     public FixturesResponse getAllFixtures() {
@@ -156,6 +164,13 @@ public class FootballApiGateway {
                 .fromHttpUrl(footballApiUrl + path).queryParams(params);
 
         return callApi(builder.build().encode().toUri(), FixturesResponse.class);
+    }
+
+    private Fixture getFixture(String path, int id) {
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(footballApiUrl + path.replace("{{fixture}}", String.valueOf(id)));
+
+        return callApi(builder.build().encode().toUri(), Fixture.class);
     }
 
     private <T> T callApi (URI uri, Class<T> reponseClass) {

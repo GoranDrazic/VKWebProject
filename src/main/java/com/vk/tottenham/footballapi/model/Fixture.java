@@ -14,6 +14,10 @@ public class Fixture {
     private String outcome;
     private Double attendance;
     private Clock clock;
+    private List<MatchOfficial> matchOfficials;
+    private Score halfTimeScore;
+    private List<TeamList> teamLists;
+    private List<Event> events;
     private List<Goal> goals;
     private double id;
 
@@ -105,6 +109,38 @@ public class Fixture {
         this.clock = clock;
     }
 
+    public List<MatchOfficial> getMatchOfficials() {
+        return matchOfficials;
+    }
+
+    public void setMatchOfficials(List<MatchOfficial> matchOfficials) {
+        this.matchOfficials = matchOfficials;
+    }
+
+    public Score getHalfTimeScore() {
+        return halfTimeScore;
+    }
+
+    public void setHalfTimeScore(Score halfTimeScore) {
+        this.halfTimeScore = halfTimeScore;
+    }
+
+    public List<TeamList> getTeamLists() {
+        return teamLists;
+    }
+
+    public void setTeamLists(List<TeamList> teamLists) {
+        this.teamLists = teamLists;
+    }
+
+    public List<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<Event> events) {
+        this.events = events;
+    }
+
     public List<Goal> getGoals() {
         return goals;
     }
@@ -119,6 +155,10 @@ public class Fixture {
 
     public void setId(double id) {
         this.id = id;
+    }
+
+    public String getScore() {
+        return (int) teams.get(0).getScore() + ":" + (int) teams.get(1).getScore();
     }
 
     @Override

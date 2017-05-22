@@ -5,12 +5,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.jsoup.helper.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.vk.tottenham.exception.VkException;
+import com.vk.tottenham.model.GameWeekSummary;
 import com.vk.tottenham.vk.model.CreateAlbumResponseWrapper;
 import com.vk.tottenham.vk.model.GetAlbumsResponseWrapper;
 import com.vk.tottenham.vk.model.GetHistoryResponseWrapper;
@@ -38,6 +42,7 @@ import com.vk.tottenham.vk.model.GetUsersResponseWrapper;
 import com.vk.tottenham.vk.model.Message;
 import com.vk.tottenham.vk.model.Photo;
 import com.vk.tottenham.vk.model.Post;
+import com.vk.tottenham.vk.model.SaveOwnerCoverPhotoResponseWrapper;
 import com.vk.tottenham.vk.model.SavePageResponseWrapper;
 import com.vk.tottenham.vk.model.SavePhotosResponse;
 import com.vk.tottenham.vk.model.SendMessageResponseWrapper;
@@ -84,7 +89,18 @@ public class VkGateway {
         return response.getResponse().getId();
 
     }
-    
+
+    public String getOwnerCoverPhotoUploadServer(String groupId, int crop_x, int crop_y, int crop_x2, int crop_y2) {
+        List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("group_id", groupId));
+        params.add(new BasicNameValuePair("crop_x", String.valueOf(crop_x)));
+        params.add(new BasicNameValuePair("crop_y", String.valueOf(crop_y)));
+        params.add(new BasicNameValuePair("crop_x2", String.valueOf(crop_x2)));
+        params.add(new BasicNameValuePair("crop_y2", String.valueOf(crop_y2)));
+        GetUploaderServerResponseWrapper response = invokeOldApi("photos.getOwnerCoverPhotoUploadServer", params, GetUploaderServerResponseWrapper.class);
+        return response.getResponse().getUploadUrl();
+    }
+
     public String getUploadServer(String groupId, String albumId) {
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("album_id", albumId));
@@ -184,6 +200,13 @@ public class VkGateway {
         return response.getResponse().get(0).getId();
         
     }
+
+    public void saveOwnerCoverPhoto(String photo, String hash) {
+        List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("photo", photo));
+        params.add(new BasicNameValuePair("hash", hash));
+        invokeOldApi("photos.saveOwnerCoverPhoto", params, SaveOwnerCoverPhotoResponseWrapper.class);
+    }
     
     public List<Photo> getPhotos(String groupId, String albumId) {
         List<NameValuePair> params = new ArrayList<>();
@@ -273,10 +296,11 @@ public class VkGateway {
             
             post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
             
-            HttpResponse  httpResponse = vkHttpClient.execute(post);
-            
-            T response = vkObjectMapper.readValue(httpResponse.getEntity().getContent(), responseType);
-            
+            HttpResponse httpResponse = vkHttpClient.execute(post);
+
+            T response = vkObjectMapper
+                    .readValue(httpResponse.getEntity().getContent(), responseType);
+
             return response;
         } catch (Exception e) {
             throw new VkException("Error communication with vk.", e);

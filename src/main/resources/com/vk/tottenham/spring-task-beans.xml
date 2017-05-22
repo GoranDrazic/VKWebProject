@@ -10,17 +10,24 @@
         <task:scheduled ref="officialNewsLoader" method="execute" cron="0 0/20 * * * ?"/>
         <task:scheduled ref="instagramPoster" method="execute" cron="0 0/20 * * * ?"/>
         <task:scheduled ref="youtubeChecker" method="execute" cron="0 0 * * * ?"/>
-        <task:scheduled ref="calendarUpdater" method="execute" cron="0 0 * * * ?"/>
-        <task:scheduled ref="birthdayPoster" method="execute" cron="0 0 10 * * ?"/>
-        <task:scheduled ref="playerInfoUpdater" method="execute" cron="0 0 0 0/5 * ?"/>
-        <task:scheduled ref="matchInfoLoader" method="execute" cron="0 0/5 * * * ?"/>
-        <task:scheduled ref="competitionPagesUpdater" method="execute" cron="0 0/30 * * * ?"/>
-        <task:scheduled ref="calendarPageUpdater" method="execute" cron="0 0/30 * * * ?"/>
         <task:scheduled ref="spursArmyNewsLoader" method="execute" cron="0 0/20 * * * ?"/>
         <task:scheduled ref="sportsRuNewsLoader" method="execute" cron="0 0/20 * * * ?"/>
         <task:scheduled ref="faplNewsLoader" method="execute" cron="0 0/20 * * * ?"/>
         <!--task:scheduled ref="sportExpressNewsLoader" method="execute" cron="0 0/20 * * * ?"/-->
+
+		<task:scheduled ref="birthdayPoster" method="execute" cron="0 0 10 * * ?"/>
+		
+        <task:scheduled ref="calendarUpdater" method="execute" cron="0 0 * * * ?"/>
+        <task:scheduled ref="playerInfoUpdater" method="execute" cron="0 0 0 0/5 * ?"/>
+
+        <task:scheduled ref="matchInfoLoader" method="execute" cron="0 0/5 * * * ?"/>
+
+        <task:scheduled ref="competitionPagesUpdater" method="execute" cron="0 0/30 * * * ?"/>
+        <task:scheduled ref="calendarPageUpdater" method="execute" cron="0 0/30 * * * ?"/>
+        
         <task:scheduled ref="chatMessageResponder" method="execute" cron="0/20 * * * * ?"/>
+
+        <task:scheduled ref="fixtureMonitor" method="execute" cron="0 * * * * ?"/>
     </task:scheduled-tasks>
  
     <task:scheduler id="scheduler" pool-size="10"/>
@@ -89,6 +96,10 @@
 
 	<bean id="faplNewsLoader" class="com.vk.tottenham.scheduler.FaplNewsLoader">
 		<!--property name="testMode" value="true" /-->
+	</bean>
+
+	<bean id="fixtureMonitor" class="com.vk.tottenham.scheduler.FixtureMonitor">
+		<property name="testMode" value="true" />
 	</bean>
 
 	<bean id="matchInfoLoader" class="com.vk.tottenham.scheduler.MatchInfoLoader">

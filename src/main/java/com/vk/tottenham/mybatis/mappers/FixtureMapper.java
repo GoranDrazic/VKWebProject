@@ -78,4 +78,16 @@ public interface FixtureMapper {
             + "WHERE date > now() AND competition=#{competition} "
             + "ORDER BY date ASC LIMIT 1")
     Fixture getNextFixture(String competition);
+
+    @Select("SELECT id as id, `date` as date, "
+            + "homeTeam as homeTeam, awayTeam as awayTeam, "
+            + "competition as competition, season as season, "
+            + "result as result, stadium as stadium, "
+            + "albumId as albumId, zimbioAlbumId as zimbioAlbumId, "
+            + "gameweek as gameweek, city as city "
+            + "FROM Fixtures "
+            + "WHERE now() < DATE_ADD(`date`, INTERVAL 2 HOUR) "
+            + "AND DATE_SUB(`date`, INTERVAL 1 HOUR) < now() "
+            + "LIMIT 1")
+    Fixture getCurrentFixture();
 }

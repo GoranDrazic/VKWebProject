@@ -17,6 +17,7 @@ import com.vk.tottenham.core.model.Article;
 import com.vk.tottenham.utils.NewsFeedLoader;
 import com.vk.tottenham.utils.PageBuilder;
 import com.vk.tottenham.utils.PhotoDownloader;
+import com.vk.tottenham.utils.WikiTranslator;
 import com.vk.tottenham.vk.model.Message;
 import com.vk.tottenham.vk.model.User;
 
@@ -43,18 +44,24 @@ public class ChatMessageResponder extends SchedulerBase {
     private static final String LIKEWISE_RESPONSE = "Присоединяюсь!";
 
     private static final String CREATE_ARTICLE_PAGE_MESSAGE = "Бот, запили страничку для статьи";
+    private static final String TRANSLATE_MESSAGE = "Бот, переведи";
 
     private Map<Long, List<String>> messageResponses = new HashMap<>(); 
 
     private static NewsFeedLoader feedLoader = new NewsFeedLoader();
 
     Pattern pattern = Pattern.compile("Бот, запили страничку для статьи (.*?) и назови её (.*?)\\.");
+
+    Pattern translatePattern = Pattern.compile("Бот, переведи (.*?)\\.");
     
     @Autowired
     private PageBuilder pageBuilder;
 
     @Autowired
     private PhotoDownloader photoDownloader;
+
+    @Autowired
+    private WikiTranslator wikiTranslator;
 
     public ChatMessageResponder() {
         super();
@@ -97,6 +104,17 @@ public class ChatMessageResponder extends SchedulerBase {
                     vkGateway.sendChatMessage(messageResponses.get(message.getUserId()).get(random), getChatId());
                 } else if (message.getBody().endsWith(FUCK_SOMEONE_ELSE_MESSAGE) && !FUCK_YOU_MESSAGE.equals(message.getBody())) {
                     vkGateway.sendChatMessage(LIKEWISE_RESPONSE, getChatId());
+                } else if (message.getBody().startsWith(TRANSLATE_MESSAGE)) {
+                    Matcher matcher = translatePattern.matcher(message.getBody());
+                    matcher.find();
+                    String term = matcher.group(1);
+
+                    String translation = wikiTranslator.translate(term);
+                    if(translation != null) {
+                        vkGateway.sendChatMessage(translation, getChatId());
+                    } else {
+                        vkGateway.sendChatMessage("К сожалению бот не смог перевести '" + term + "'. Идите нахуй!", getChatId());
+                    }
                 } else if (message.getBody().startsWith(CREATE_ARTICLE_PAGE_MESSAGE)) {
                     Matcher matcher = pattern.matcher(message.getBody());
                     matcher.find();

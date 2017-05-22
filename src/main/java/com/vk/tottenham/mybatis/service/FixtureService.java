@@ -21,4 +21,6 @@ public interface FixtureService {
     Fixture getPreviousFixture(String competition);
 
     Fixture getNextFixture(String competition);
+    
+    Fixture getCurrentFixture();
 }

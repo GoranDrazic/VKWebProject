@@ -33,6 +33,7 @@ import com.vk.tottenham.core.model.VKContext;
 import com.vk.tottenham.exception.VkException;
 import com.vk.tottenham.vk.VkGateway;
 import com.vk.tottenham.vk.model.PhotoDescription;
+import com.vk.tottenham.vk.model.UploadCoverResult;
 import com.vk.tottenham.vk.model.UploadResult;
 
 @Component("photoDownloader")
@@ -70,6 +71,14 @@ public class PhotoDownloader {
         return uploadPhoto(href, imageId, uploadUrl, albumId, groupId, description);
     }
 
+    public void uploadCoverPhoto(String groupId, String localCoverPhoto) {
+        String uploadUrl = vkGateway.getOwnerCoverPhotoUploadServer(groupId, 0, 0, 1590, 400);
+
+        UploadCoverResult uploadResult = uploadPhotos(uploadUrl, localCoverPhoto, UploadCoverResult.class);
+        
+        vkGateway.saveOwnerCoverPhoto(uploadResult.getPhoto(), uploadResult.getHash());
+    }
+
     private String getImageId(String href) {
         String imageId = href;
         if (imageId.contains("?")) {
@@ -92,7 +101,7 @@ public class PhotoDownloader {
             photo.setWidth(bimg.getHeight());
         } catch (IOException e) {}
 
-        UploadResult uploadResult = uploadPhotos(uploadUrl, localPhoto);
+        UploadResult uploadResult = uploadPhotos(uploadUrl, localPhoto, UploadResult.class);
 
         deleteLocalPhoto(localPhoto);
 
@@ -124,12 +133,13 @@ public class PhotoDownloader {
         }
     }
 
-    private static UploadResult uploadPhotos(String uploadUrl, String localPhoto) {
+    private static <T> T uploadPhotos(String uploadUrl, String localPhoto, Class<T> responseClass) {
         try {
             HttpPost uploadFile = new HttpPost(uploadUrl);
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             File f = new File(localPhoto);
-            builder.addBinaryBody("file1", new FileInputStream(f),
+            String param = responseClass.equals(UploadResult.class) ? "file1" : "photo";
+            builder.addBinaryBody(param, new FileInputStream(f),
                     ContentType.APPLICATION_OCTET_STREAM, f.getName());
             HttpEntity multipart = builder.build();
             uploadFile.setEntity(multipart);
@@ -143,9 +153,7 @@ public class PhotoDownloader {
                 result.append(line);
             }
             response.getEntity().getContent().close();
-            return mapper.readValue(result.toString(),
-                    new TypeReference<UploadResult>() {
-                    });
+            return mapper.readValue(result.toString(), responseClass);
         } catch (Exception e) {
             throw new VkException("Exception updaloding a photo", e);
         }
