@@ -9,16 +9,22 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import com.vk.tottenham.core.model.Article;
 import com.vk.tottenham.core.model.RSS;
 import com.vk.tottenham.exception.VkException;
 
+@Component("newsFeedLoader")
 public class NewsFeedLoader {
     public static final String OFFICIAL_FEED_URL = "http://www.tottenhamhotspur.com/application/iphone/latestnews.xml";
     public static final String FAPL_FEED_URL = "http://fapl.ru/tags/%D2%EE%F2%F2%E5%ED%F5%FD%EC/rss/";
 
-    private static HttpClient client = HttpClientBuilder.create().build();
+    @Autowired
+    @Qualifier("httpClient")
+    private HttpClient client;
 
     public List<Article> loadNewsFeed(String url) {
         try {

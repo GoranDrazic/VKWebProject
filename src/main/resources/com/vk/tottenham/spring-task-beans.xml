@@ -22,7 +22,7 @@
 
         <task:scheduled ref="matchInfoLoader" method="execute" cron="0 0/5 * * * ?"/>
 
-        <task:scheduled ref="competitionPagesUpdater" method="execute" cron="0 0/30 * * * ?"/>
+        <!-- task:scheduled ref="competitionPagesUpdater" method="execute" cron="0 0/30 * * * ?"/-->
         <task:scheduled ref="calendarPageUpdater" method="execute" cron="0 0/30 * * * ?"/>
         
         <task:scheduled ref="chatMessageResponder" method="execute" cron="0/20 * * * * ?"/>
@@ -122,4 +122,10 @@
 		<constructor-arg value="243675948" />
 		<constructor-arg value="2000000001" />
 	</bean>
+	
+	<bean id="httpClientBuilder" class="org.apache.http.impl.client.HttpClientBuilder"
+		factory-method="create">	
+	</bean>
+
+	<bean id="httpClient" factory-bean="httpClientBuilder" factory-method="build" />
 </beans>

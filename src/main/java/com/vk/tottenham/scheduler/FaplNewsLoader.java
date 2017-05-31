@@ -21,11 +21,12 @@ public class FaplNewsLoader extends SchedulerBase {
 
     private static final Logger LOGGER = Logger.getLogger(FaplNewsLoader.class);
 
-    private static NewsFeedLoader feedLoader = new NewsFeedLoader();
-
     @Autowired
     @Qualifier("resourceService")
     private ResourceService articleService;
+
+    @Autowired
+    private NewsFeedLoader feedLoader;
 
     Pattern pattern = Pattern.compile("http://fapl.ru/posts/(.*?)/");
 

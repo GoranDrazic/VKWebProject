@@ -28,4 +28,12 @@ public class PhotoDescription {
     public void setHeight(int height) {
         this.height = height;
     }
+
+    public PhotoDescription() {
+        //
+    }
+
+    public PhotoDescription(String photoId) {
+        this.photoId = photoId;
+    }
 }

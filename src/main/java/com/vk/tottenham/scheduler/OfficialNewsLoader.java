@@ -2,14 +2,12 @@ package com.vk.tottenham.scheduler;
 
 import static com.vk.tottenham.utils.NewsFeedLoader.OFFICIAL_FEED_URL;
 
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -20,10 +18,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.vk.tottenham.core.model.Article;
+import com.vk.tottenham.core.model.Resource;
 import com.vk.tottenham.exception.VkException;
-import com.vk.tottenham.mybatis.service.ArticleService;
+import com.vk.tottenham.mybatis.service.ResourceService;
 import com.vk.tottenham.utils.ContentBuilder;
-import com.vk.tottenham.utils.Icon;
+import com.vk.tottenham.utils.JsoupWrapper;
 import com.vk.tottenham.utils.NewsFeedLoader;
 import com.vk.tottenham.utils.PhotoDownloader;
 
@@ -45,24 +44,36 @@ public class OfficialNewsLoader extends SchedulerBase {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
     }
-    
-    private static NewsFeedLoader feedLoader = new NewsFeedLoader();
 
     @Autowired
-    @Qualifier("articleService")
-    private ArticleService articleService;
+    private NewsFeedLoader feedLoader;
+    @Autowired
+    @Qualifier("resourceService")
+    private ResourceService articleService;
     @Autowired
     private ContentBuilder contentBuilder;
     @Autowired
     private PhotoDownloader photoDownloader;
+    @Autowired
+    private JsoupWrapper jsoupWrapper;
 
     @Override
     public void execute() {
+        StringBuilder articlePart = new StringBuilder();
+        for (String postedArticle : getPostedArticles()) {
+            articlePart.append("• «").append(postedArticle).append("»\n");
+        }
+        if (articlePart.length() > 0) {
+            vkGateway.sendChatMessage("Новые статьи: \n" + articlePart, getChatId());
+        }
+    }
+
+    private List<String> getPostedArticles() {
         List<Article> feedNews = feedLoader.loadNewsFeed(OFFICIAL_FEED_URL);
         List<String> postedArticles = new LinkedList<>();
         for (Article news : feedNews) {
             try {
-                if (articleService.findById(news.getId()) == null) {
+                if (!articleService.exists("news:official:" + news.getId())) {
                     LOGGER.info("New news: " + news.getTitle());
     
                     String photoId = photoDownloader.downloadPhoto(news.getThumbnail(), isTestMode).getPhotoId();
@@ -72,34 +83,30 @@ public class OfficialNewsLoader extends SchedulerBase {
                         galleryPhotoIds.add(photoId);
                     }
     
-                    String message = contentBuilder.buildPost(news.getTitle(), news.getDescription(), news.getContent(), news.getLink(), "tottenhamhotspur.com", Icon.ARTICLE);
+                    String message = contentBuilder.buildPost(news.getTitle(), news.getDescription(), news.getContent(), news.getLink(), "tottenhamhotspur.com");
                     
                     LOGGER.info("Posting: " + news.getTitle());
                     vkGateway.postOnWall(getGroupId(), getMediaGroupId(), message.toString(), galleryPhotoIds, getClosestAvailableDate());
                     postedArticles.add(news.getTitle());
+
                     LOGGER.info("Saving: " + news.getTitle());
-                    articleService.save(news);
+                    Resource resource = new Resource();
+                    resource.setId("news:official:" + news.getId());
+                    articleService.save(resource);
                 } else {
                     LOGGER.info("Ignoring: " + news.getTitle());
                 }
             } catch (Exception e) {
-                throw new VkException("Exception loading news: " + news.getTitle(), e);
+                //TODO: temporarily swallow this dude
             }
         }
-        if (postedArticles.size() > 0) {
-            StringBuilder articlePart = new StringBuilder();
-            for (String postedArticle : postedArticles) {
-                articlePart.append("• «").append(postedArticle).append("»\n");
-            }
-            vkGateway.sendChatMessage("Новые статьи: \n"
-                    + articlePart, getChatId());
-        }
+        return postedArticles;
     }
 
     private List<String> loadGalleryPhotos(String link) {
         try {
             List<String> photoIds = new LinkedList<>();
-            Document document = Jsoup.parse(new URL(link), 10000);
+            Document document = jsoupWrapper.getDocument((link));
             Elements imageContainers = document.getElementsByClass("galleryImages");
             for (Element imageContainer : imageContainers) {
                 Elements images = imageContainer.getElementsByTag("img");
