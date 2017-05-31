@@ -12,7 +12,7 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.vk.tottenham.core.model.Resource;
+import com.vk.tottenham.core.model.ResourceType;
 import com.vk.tottenham.exception.VkException;
 import com.vk.tottenham.mybatis.service.ResourceService;
 import com.vk.tottenham.utils.PhotoDownloader;
@@ -52,7 +52,7 @@ public class TwitterPoster extends SchedulerBase {
                             imgSrc = imgElement.attr("src");
                         }
                     }
-                    if(!twitterService.exists("twitter:" + account + ":" + href)) {
+                    if(!twitterService.exists(ResourceType.TWITTER.value(), account, href)) {
                         String photoId = null;
                         if (imgSrc != null) {
                             photoId = photoDownloader.downloadPhoto(imgSrc, isTestMode).getPhotoId();
@@ -61,9 +61,7 @@ public class TwitterPoster extends SchedulerBase {
                                 + twitText
                                 + "».", getChatId(), photoId, getMediaGroupId());
 
-                        Resource resource = new Resource();
-                        resource.setId("twitter:" + account + ":" + href);
-                        twitterService.save(resource);
+                        twitterService.save(ResourceType.TWITTER.value(), account, href);
                     }
                     Thread.currentThread().sleep(5*1000);
                 }

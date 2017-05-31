@@ -13,12 +13,16 @@ public class ResourceServiceImpl implements ResourceService {
     private ResourceMapper resourceMapper;
 
     @Override
-    public boolean exists(String id) {
-        return resourceMapper.findById(id) != null;
+    public boolean exists(String type, String source, String id) {
+        return resourceMapper.findById(concat(type, source, id)) != null;
     }
 
     @Override
-    public void save(Resource resource) {
-        resourceMapper.save(resource);
+    public void save(String type, String source, String id) {
+        resourceMapper.save(new Resource(concat(type, source, id)));
+    }
+
+    private String concat(String type, String source, String id) {
+        return type + ":" + source + ":" + id;
     }
 }

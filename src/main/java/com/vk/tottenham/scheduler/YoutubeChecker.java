@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.vk.tottenham.core.model.Resource;
+import com.vk.tottenham.core.model.ResourceType;
 import com.vk.tottenham.exception.VkException;
 import com.vk.tottenham.mybatis.service.ResourceService;
 
@@ -42,10 +42,8 @@ public class YoutubeChecker extends SchedulerBase {
                 Element link = video.getElementsByClass("yt-uix-sessionlink").last();
                 String title = link.text();
                 String href = link.attr("href");
-                if (!youtubeService.exists("youtube:spurs_official:" + href)) {
-                    Resource youtubeResource = new Resource();
-                    youtubeResource.setId("youtube:spurs_official:" + href);
-                    youtubeService.save(youtubeResource);
+                if (!youtubeService.exists(ResourceType.YOUTUBE.value(), "spurs_official", href)) {
+                    youtubeService.save(ResourceType.YOUTUBE.value(), "spurs_official", href);
                     vkGateway.sendChatMessage(
                             "Официальный канал на ютюбе загрузил новое видео: " + title + "\nhttps://www.youtube.com" + href,
                             getChatId());

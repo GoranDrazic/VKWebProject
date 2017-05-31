@@ -10,4 +10,11 @@ public class Resource {
     public void setId(String id) {
         this.id = id;
     }
+
+    public Resource(String id) {
+        this.id = id;
+    }
+
+    public Resource() {
+    }
 }

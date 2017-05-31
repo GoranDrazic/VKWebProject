@@ -1,11 +1,9 @@
 package com.vk.tottenham.mybatis.service;
 
-import com.vk.tottenham.core.model.Resource;
-
 public interface ResourceService {
 
-    boolean exists(String resourceId);
+    boolean exists(String type, String source, String id);
 
-    void save(Resource resource);
+    void save(String type, String source, String id);
 
 }

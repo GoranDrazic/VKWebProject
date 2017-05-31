@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.vk.tottenham.core.model.Player;
-import com.vk.tottenham.core.model.Resource;
+import com.vk.tottenham.core.model.ResourceType;
 import com.vk.tottenham.mybatis.service.PlayerService;
 import com.vk.tottenham.mybatis.service.ResourceService;
 import com.vk.tottenham.utils.Icon;
@@ -81,11 +81,9 @@ public class InstagramPoster extends SchedulerBase {
                                         : href.substring(lastSlashIndex + 1);
                                 boolean isVideo = Boolean
                                         .valueOf(mediaObj.get("is_video").toString());
-                                if (!isVideo && !instagramService.exists("instagram:" + player.getInstagram() + ":" + photoId)) {
+                                if (!isVideo && !instagramService.exists(ResourceType.INSTAGRAM.value(), player.getInstagram(), photoId)) {
                                     photoIds.put(photoDownloader.downloadPhoto(href, isTestMode).getPhotoId(), caption);
-                                    Resource resource = new Resource();
-                                    resource.setId("instagram:" + player.getInstagram() + ":" + photoId);
-                                    instagramService.save(resource);
+                                    instagramService.save(ResourceType.INSTAGRAM.value(), player.getInstagram(), photoId);
                                 }
                             }
                         }
