@@ -23,7 +23,7 @@
         <task:scheduled ref="matchInfoLoader" method="execute" cron="0 0/5 * * * ?"/>
 
         <!-- task:scheduled ref="competitionPagesUpdater" method="execute" cron="0 0/30 * * * ?"/-->
-        <task:scheduled ref="calendarPageUpdater" method="execute" cron="0 0/30 * * * ?"/>
+        <!-- task:scheduled ref="calendarPageUpdater" method="execute" cron="0 0/30 * * * ?"/-->
         
         <task:scheduled ref="chatMessageResponder" method="execute" cron="0/20 * * * * ?"/>
 
