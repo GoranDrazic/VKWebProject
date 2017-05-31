@@ -41,13 +41,13 @@ public class FaplNewsLoader extends SchedulerBase {
 
                 String newsId = matcher.group(1).trim();
 
-                if (!articleService.exists("news:fapl" + newsId)) {
+                if (!articleService.exists("news:fapl:" + newsId)) {
                     LOGGER.info("New news: " + news.getTitle());
     
                     postedArticles.add(news);
                     LOGGER.info("Saving: " + news.getTitle());
                     Resource resource = new Resource();
-                    resource.setId("news:fapl" + newsId);
+                    resource.setId("news:fapl:" + newsId);
                     articleService.save(resource);
                 } else {
                     LOGGER.info("Ignoring: " + news.getTitle());
