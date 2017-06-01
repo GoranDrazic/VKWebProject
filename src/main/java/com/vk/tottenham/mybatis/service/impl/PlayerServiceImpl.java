@@ -36,7 +36,18 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
+    @Deprecated
     public Player findNameAndSurname(Player player) {
         return playerMapper.findNameAndSurname(player);
+    }
+
+    @Override
+    public Player find(int id) {
+        return playerMapper.find(id);
+    }
+
+    @Override
+    public void updateLastDBPost() {
+        playerMapper.updateLastDBPost();
     }
 }

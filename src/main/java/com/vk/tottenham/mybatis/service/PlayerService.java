@@ -9,5 +9,8 @@ public interface PlayerService {
     void save(Player player);
     void update(Player player);
     List<Player> findBirthdayBoys();
+    @Deprecated
     Player findNameAndSurname(Player player);
+    Player find(int id);
+    void updateLastDBPost();
 }

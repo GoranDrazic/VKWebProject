@@ -15,7 +15,7 @@
         <task:scheduled ref="faplNewsLoader" method="execute" cron="0 0/20 * * * ?"/>
         <!--task:scheduled ref="sportExpressNewsLoader" method="execute" cron="0 0/20 * * * ?"/-->
 
-		<task:scheduled ref="birthdayPoster" method="execute" cron="0 0 10 * * ?"/>
+		<task:scheduled ref="birthdayPoster" method="execute" cron="0 0 10/1 * * ?"/>
 		
         <task:scheduled ref="calendarUpdater" method="execute" cron="0 0 * * * ?"/>
         <task:scheduled ref="playerInfoUpdater" method="execute" cron="0 0 0 0/5 * ?"/>

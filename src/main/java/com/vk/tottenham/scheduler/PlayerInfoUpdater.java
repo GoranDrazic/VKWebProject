@@ -1,6 +1,5 @@
 package com.vk.tottenham.scheduler;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -38,28 +37,30 @@ public class PlayerInfoUpdater extends SchedulerBase {
         String compSeason = CompSeasonUtil.getCompSeason(competitionsResponse, CompetitionName.PREMIER_LEAGUE);
         SquadResponse squadResponse = footballApiGateway.getSquad(compSeason);
         for (com.vk.tottenham.footballapi.model.Player fapiPlayer : squadResponse.getPlayers()) {
-            Player player = new Player();
-            player.setDateJoined(fapiPlayer.getJoinDate().getLabel());
-            player.setDateOfBirth(fapiPlayer.getBirth().getDate().getLabel());
-            player.setName(fapiPlayer.getName().getFirst());
-            player.setPosition(Position.getByString(fapiPlayer.getInfo().getPosition()));
-            player.setSquadNumber((byte)fapiPlayer.getInfo().getShirtNum());
-            player.setSurname(fapiPlayer.getName().getLast());
-            Player existing = playerService.findNameAndSurname(player);
+            Player player = convert(fapiPlayer);
+            Player existing = playerService.find(player.getId());
             if (existing == null) {
+                //TODO: saveOrUpdate
                 playerService.save(player);
             } else {
-                player.setId(existing.getId());
                 playerService.update(player);
             }
         }
     }
 
-    public void setPlayerService(PlayerService playerService) {
-        this.playerService = playerService;
+    private Player convert(com.vk.tottenham.footballapi.model.Player fapiPlayer) {
+        Player player = new Player();
+        player.setDateJoined(fapiPlayer.getJoinDate().getLabel());
+        player.setDateOfBirth(fapiPlayer.getBirth().getDate().getLabel());
+        player.setName(fapiPlayer.getName().getFirst());
+        player.setPosition(Position.getByString(fapiPlayer.getInfo().getPosition()));
+        player.setSquadNumber((byte)fapiPlayer.getInfo().getShirtNum());
+        player.setSurname(fapiPlayer.getName().getLast());
+        player.setId(fapiPlayer.getId());
+        return player;
     }
 
-    public static final void main (String[] args) throws ParseException {
-        System.out.println(formatter.parse("27 June 2007"));
+    public void setPlayerService(PlayerService playerService) {
+        this.playerService = playerService;
     }
 }

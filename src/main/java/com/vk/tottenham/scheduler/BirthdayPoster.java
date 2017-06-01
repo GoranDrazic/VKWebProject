@@ -23,6 +23,7 @@ public class BirthdayPoster extends SchedulerBase {
             vkGateway.sendChatMessage("Завтра день рождения у "
                     + String.join(", ", names) + 
                     ". Пожалуйста сделайте пост.", getChatId(), photo, "125436039");
+            playerService.updateLastDBPost();
         }
     }
 }
