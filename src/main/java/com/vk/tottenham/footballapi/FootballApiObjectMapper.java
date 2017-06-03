@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
 @Component("footballApiObjectMapper")
 public class FootballApiObjectMapper extends ObjectMapper {

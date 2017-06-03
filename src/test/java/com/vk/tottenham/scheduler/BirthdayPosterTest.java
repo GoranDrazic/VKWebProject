@@ -1,18 +1,12 @@
 package com.vk.tottenham.scheduler;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.InputStream;
 import java.util.List;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -22,7 +16,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import com.google.common.collect.Lists;
 import com.vk.tottenham.core.model.Player;
 import com.vk.tottenham.mybatis.service.PlayerService;
-import com.vk.tottenham.utils.NewsFeedLoader;
 
 public class BirthdayPosterTest extends SchedulerBaseTest {
 
