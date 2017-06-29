@@ -41,7 +41,7 @@ public interface PlayerMapper {
             + "instagram as instagram, russianNameNom as russianNameNom, "
             + "statsPhoto as statsPhoto "
             + "FROM Players "
-            + "WHERE DATE_FORMAT(dateOfBirth,'%m-%d') = DATE_FORMAT(DATE_ADD(NOW(),INTERVAL 0 DAY),'%m-%d') "
+            + "WHERE DATE_FORMAT(dateOfBirth,'%m-%d') = DATE_FORMAT(DATE_ADD(NOW(),INTERVAL 1 DAY),'%m-%d') "
             + "AND (lastBDPost <> year(curdate()) OR lastBDPost IS NULL)")
     List<Player> findBirthdayBoys();
 

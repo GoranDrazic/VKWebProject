@@ -1,6 +1,9 @@
 package com.vk.tottenham.instagram.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Node {
+    @JsonProperty("is_video")
     private boolean isVideo;
     private String displaySrc;
     private String caption;
