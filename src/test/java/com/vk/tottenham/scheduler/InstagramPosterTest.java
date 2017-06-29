@@ -92,9 +92,11 @@ public class InstagramPosterTest extends SchedulerBaseTest {
 
         for (String name : Lists.newArrayList("toby", "chris")) {
             for (int i=0; i<12; i++) {
-                verify(instagramService).exists(eq(ResourceType.INSTAGRAM.value()), anyString(), eq(name.charAt(0) + "d" + i + ".jpg"));
-                if (i % 4 != 3) {
-                    verify(instagramService).save(eq(ResourceType.INSTAGRAM.value()), anyString(), eq(name.charAt(0) + "d" + i + ".jpg"));
+                if(i % 6 != 5 || !"toby".equals(name)) {
+                    verify(instagramService).exists(eq(ResourceType.INSTAGRAM.value()), anyString(), eq(name.charAt(0) + "d" + i + ".jpg"));
+                    if (i % 4 != 3) {
+                        verify(instagramService).save(eq(ResourceType.INSTAGRAM.value()), anyString(), eq(name.charAt(0) + "d" + i + ".jpg"));
+                    }
                 }
             }
         }
