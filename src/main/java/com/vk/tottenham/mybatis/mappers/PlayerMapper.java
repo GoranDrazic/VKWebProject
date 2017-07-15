@@ -68,6 +68,6 @@ public interface PlayerMapper {
 
     @Select("UPDATE `Players` "
             + "SET lastBDPost = year(curdate()) "
-            + "WHERE DATE_FORMAT(dateOfBirth,'%m-%d') = DATE_FORMAT(DATE_ADD(NOW(),INTERVAL 0 DAY),'%m-%d')")
+            + "WHERE DATE_FORMAT(dateOfBirth,'%m-%d') = DATE_FORMAT(DATE_ADD(NOW(),INTERVAL 1 DAY),'%m-%d')")
     void updateLastDBPost();
 }
